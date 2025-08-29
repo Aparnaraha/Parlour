@@ -17,7 +17,7 @@ const SiteLayout = ({ children }) => {
         {children}
       </main>
       <TopFooter />
-      <EnquiryLocateUs/>
+      {/* <EnquiryLocateUs/> */}
       <SiteFooter />
     </div>
   );
