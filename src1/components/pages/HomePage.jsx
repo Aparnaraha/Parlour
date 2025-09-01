@@ -1,345 +1,264 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import About from "../ui/About";
-import imgVideo from "../../img/hero2.mp4";
-import "../../styles/globals.css";
-// Importing Lucide Icons
-import { Scissors, Sparkles, Paintbrush, ChevronRight } from "lucide-react";
 
-// =========================================================================
-// Framer Motion Variants for a sophisticated reveal
-// =========================================================================
+import About from "../ui/About";
+import OurServices from "../ui/OurServices";
+import WhyChooseUs from "../ui/WhyChooseUs";
+import Testimonial from '../ui/Testimonial';
+import EnquiryLocateUs from "../ui/EnquiryLocateUs";
+import Products from '../ui/Product'; // Renamed import to Products for clarity
+import heroVideo from "../../img/hero.mp4";
+import heroImg1 from "../../img/hero1.jpeg";
+import heroImg2 from "../../img/hero2.jpeg";
+import FAQSection from '../ui/FaqSection'
+
+const slides = [
+  {
+    type: "video",
+    src: heroVideo,
+    heading: "Welcome to Alex",
+    subtitle:
+      "At Alex Beauty Parlour, we blend modern style with traditional elegance to give you confidence and charm every single day.",
+  },
+  {
+    type: "image",
+    src: heroImg1,
+    heading: "World-Class Grooming",
+    subtitle:
+      "Our professionals craft unique looks tailored to your personality, ensuring you leave with unmatched elegance and sophistication.",
+  },
+  {
+    type: "image",
+    src: heroImg2,
+    heading: "Grooming Redefined",
+    subtitle:
+      "At Alex, we redefine beauty with premium services, attention to detail, and timeless style.",
+  },
+  {
+    type: "image",
+    src: heroImg1,
+    heading: "Style Meets Elegance",
+    subtitle:
+      "Discover premium grooming crafted to perfection for every gentleman who values class.",
+  },
+];
+
+const backgroundVariants = {
+  initial: { opacity: 0.5, scale: 1.15, filter: 'brightness(0.7)' },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    filter: 'brightness(1)',
+    transition: {
+      duration: 3,
+      ease: "easeInOut"
+    }
+  },
+  exit: {
+    opacity: 0,
+    scale: 1.15,
+    transition: {
+      duration: 1.5,
+      ease: "easeIn"
+    }
+  },
+};
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2, // Controls the delay between child animations
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.9,
-      ease: "easeOut",
-    },
-  },
-};
-
-const iconGroupVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.3,
       delayChildren: 0.5,
     },
   },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeIn"
+    }
+  }
 };
 
-const iconItemVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 20 },
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
   visible: {
-    opacity: 1,
-    scale: 1,
     y: 0,
+    opacity: 1,
     transition: {
-      duration: 0.7,
-      ease: "easeOut",
+      type: "spring",
+      stiffness: 100,
+      damping: 10,
     },
   },
 };
 
-const Hero = () => {
-  const [showContent, setShowContent] = useState(false);
+const HeroSlider = ({ onEnquiryClick }) => {
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    // A brief delay to allow the video to load and start smoothly
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 500);
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden font-['Cormorant Garamond',serif]">
-      {/* Background Video Layer */}
-      <video
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src={imgVideo} type="video/mp4" />
-      </video>
-      
-      {/* Semi-transparent Overlay */}
-      <div className="absolute inset-0 z-10 bg-black opacity-40" />
-      
-      {/* Main Content Area */}
-      <div className="relative z-20 text-center px-6 md:px-12 py-16 w-full max-w-7xl mx-auto text-white">
-        <AnimatePresence>
-          {showContent && (
-            <motion.div
-              className="flex flex-col items-center"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+    <section className="relative h-[800px] w-full overflow-hidden flex items-center justify-center">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          className="absolute inset-0 z-0"
+          variants={backgroundVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
+          {slides[current].type === "video" ? (
+            <video
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
             >
-              {/* Brand Tagline */}
-              <motion.p
-                className="text-lg md:text-xl font-light tracking-widest uppercase mb-4 opacity-80 drop-shadow-md"
-                variants={itemVariants}
-              >
-                The Gentleman's Parlour
-              </motion.p>
-              
-              {/* Main Heading with a luxurious thin font style */}
-              <motion.h1
-                className="text-5xl md:text-8xl font-thin leading-tight text-center mb-6 drop-shadow-lg"
-                variants={itemVariants}
-              >
-                Timeless Style, Crafted for the Modern Man.
-              </motion.h1>
+              <source src={slides[current].src} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={slides[current].src}
+              alt="Slide Background"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
 
-              {/* Service Highlights with Lucide Icons and individual animations */}
-              <motion.div
-                className="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-12 mb-12"
-                variants={iconGroupVariants}
-              >
-                {/* Precision Cuts Icon */}
-                <motion.div 
-                  className="flex flex-col items-center group cursor-pointer"
-                  variants={iconItemVariants}
-                  whileHover={{ scale: 1.15, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Scissors className="w-12 h-12 md:w-16 md:h-16 text-white drop-shadow-md transition-all duration-300 group-hover:text-blue-300" />
-                  <p className="mt-2 text-xs md:text-sm font-light tracking-wide uppercase opacity-80 group-hover:opacity-100 transition-opacity duration-300">Precision Cuts</p>
-                </motion.div>
-                
-                {/* Luxury Treatments Icon */}
-                <motion.div 
-                  className="flex flex-col items-center group cursor-pointer"
-                  variants={iconItemVariants}
-                  whileHover={{ scale: 1.15, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-white drop-shadow-md transition-all duration-300 group-hover:text-blue-300" />
-                  <p className="mt-2 text-xs md:text-sm font-light tracking-wide uppercase opacity-80 group-hover:opacity-100 transition-opacity duration-300">Luxury Treatments</p>
-                </motion.div>
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 to-transparent"></div>
+      
+      <div 
+        className="absolute inset-0 z-10" 
+        style={{ 
+          boxShadow: 'inset 0px 0px 100px rgba(0,0,0,0.8)'
+        }}
+      ></div>
 
-                {/* Expert Grooming Icon */}
-                <motion.div 
-                  className="flex flex-col items-center group cursor-pointer"
-                  variants={iconItemVariants}
-                  whileHover={{ scale: 1.15, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Paintbrush className="w-12 h-12 md:w-16 md:h-16 text-white drop-shadow-md transition-all duration-300 group-hover:text-blue-300" />
-                  <p className="mt-2 text-xs md:text-sm font-light tracking-wide uppercase opacity-80 group-hover:opacity-100 transition-opacity duration-300">Expert Grooming</p>
-                </motion.div>
-              </motion.div>
-              
-              {/* Call to Action Button with a modern hover effect */}
+      <div className="relative z-20 w-full max-w-4xl px-6 text-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <motion.h2 
+              className="text-4xl md:text-7xl font-extrabold bg-gradient-to-r from-white to-amber-300 text-transparent bg-clip-text drop-shadow-lg"
+              variants={itemVariants}
+              style={{
+                textShadow: '0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2)'
+              }}
+            >
+              {slides[current].heading}
+            </motion.h2>
+
+            <motion.p 
+              className="mt-6 text-lg md:text-xl text-gray-200 drop-shadow-lg"
+              variants={itemVariants}
+            >
+              {slides[current].subtitle}
+            </motion.p>
+
+            <motion.div 
+              className="mt-8 flex justify-center gap-4"
+              variants={itemVariants}
+            >
+              {/* This button now says "Enquiry" and calls the prop function */}
               <motion.button
-                className="px-12 py-4 font-medium text-lg tracking-wider border border-white hover:bg-white hover:text-black transition-all duration-300 relative overflow-hidden group"
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 255, 255, 0.5)' }}
+                className="relative px-6 py-3 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/20 transition-all duration-300 overflow-hidden"
+                style={{
+                  boxShadow: '0 0 15px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.2)'
+                }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2)' 
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onEnquiryClick}
+              >
+                <span className="relative z-10">Enquiry</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 transition-opacity duration-300 hover:opacity-20"></span>
+              </motion.button>
+
+              <motion.button
+                className="relative px-6 py-3 border-2 border-yellow-600 text-yellow-600 font-semibold rounded-xl transition-all duration-300 overflow-hidden"
+                style={{
+                  boxShadow: '0 0 15px rgba(255, 215, 0, 0.2)'
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: '0 0 15px rgba(255, 215, 0, 0.4), 0 0 25px rgba(255, 215, 0, 0.2)',
+                  backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                  color: 'white'
+                }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="flex items-center space-x-2">
-                  <span>Book Your Appointment</span>
-                  <ChevronRight className="w-5 h-5 ml-2 transform translate-x-0 transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
+                <span className="relative z-10">Learn More</span>
               </motion.button>
             </motion.div>
-          )}
+          </motion.div>
         </AnimatePresence>
+      </div>
+      
+      <div className="absolute bottom-8 left-0 w-full flex justify-center gap-3 z-30">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrent(index)}
+            className="w-4 h-4 rounded-full transition-all duration-300 cursor-pointer"
+          >
+            <motion.div
+              className={`w-full h-full rounded-full ${
+                index === current ? "bg-yellow-500" : "bg-gray-300"
+              }`}
+              animate={index === current ? { scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] } : {}}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </button>
+        ))}
       </div>
     </section>
   );
 };
 
 const HomePage = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const handleEnquiryClick = () => {
+    setCurrentPage('contact');
+  };
+
   return (
     <div>
-      <Hero/>
-      <About />
+      {currentPage === 'home' && (
+        <>
+          <HeroSlider onEnquiryClick={handleEnquiryClick} />
+          <About />
+          <OurServices />
+          <WhyChooseUs />
+          <Products />
+          <Testimonial />
+          <FAQSection/>
+        </>
+      )}
+      {currentPage === 'contact' && <ContactPage />}
     </div>
-  )
-}
+  );
+};
 
 export default HomePage;
 
-
-// import React, { useState, useEffect } from "react";
-// import { motion, AnimatePresence } from "framer-motion";
-// import imgVideo from "../../img/hero2.mp4";
-// import "../../styles/globals.css"; // Ensure this file exists with the CSS from the previous response
-// import About from "../ui/About";
-
-// const Hero = () => {
-//   const texts = [
-//     "Expert Haircuts & Styling",
-//     "Luxury Skin Treatments",
-//     "Signature Grooming Experience",
-//   ];
-
-//   const [currentIndex, setCurrentIndex] = useState(0);
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setCurrentIndex((prev) => (prev + 1) % texts.length);
-//     }, 3000);
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   return (
-//     <>
-//       <link
-//         rel="stylesheet"
-//         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-//         crossOrigin="anonymous"
-//         referrerPolicy="no-referrer"
-//       />
-
-//       <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden font-['Montserrat',sans-serif] hero-section">
-//         {/* Background Video (z-index: 0) */}
-//         <video
-//           className="absolute top-0 left-0 w-full h-full object-cover z-0"
-//           autoPlay
-//           muted
-//           loop
-//           playsInline
-//         >
-//           <source src={imgVideo} type="video/mp4" />
-//         </video>
-
-//         {/* Content (z-index: 2, sits on top of the overlay) */}
-//         <motion.div
-//           className="relative z-20 text-center text-white px-6 max-w-5xl mx-auto py-16 hero-content"
-//           initial={{ opacity: 0, y: 40 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 1 }}
-//         >
-//           {/* Brand Tagline */}
-//           <div
-//             className="inline-flex items-center px-6 py-2 rounded-full mb-6 font-medium text-sm tracking-wide"
-//             style={{
-//               background: "rgba(255, 255, 255, 0.15)",
-//               backdropFilter: "blur(10px)",
-//               border: "1px solid rgba(255, 255, 255, 0.2)",
-//             }}
-//           >
-//             <span
-//               className="w-2 h-2 rounded-full mr-2"
-//               style={{ backgroundColor: "#4ade80" }}
-//             ></span>
-//             THE GENTLEMAN'S PARLOUR
-//           </div>
-
-//           {/* Rotating Heading (Updated with golden and white) */}
-//           <AnimatePresence mode="wait">
-//             <motion.h1
-//               key={currentIndex}
-//               className="font-['Cormorant Garamond',serif] text-4xl md:text-6xl font-semibold mb-6 leading-tight drop-shadow-lg"
-//               initial={{ opacity: 0, y: 40 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               exit={{ opacity: 0, y: -40 }}
-//               transition={{ duration: 0.8 }}
-//               style={{
-//                 background: "linear-gradient(90deg, #FFFFFF 0%, #FFD700 50%, #B8860B 100%)",
-//                 WebkitBackgroundClip: "text",
-//                 WebkitTextFillColor: "transparent",
-//               }}
-//             >
-//               {texts[currentIndex]}
-//             </motion.h1>
-//           </AnimatePresence>
-
-//           {/* Buttons with onClick handler */}
-//           <div className="flex flex-wrap justify-center gap-6 mt-6">
-//             <motion.button
-//               className="flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-base shadow-lg text-white"
-//               style={{
-//                 background: "linear-gradient(90deg, #2c3e50 0%, #3498db 100%)",
-//               }}
-//               whileHover={{
-//                 y: -3,
-//                 scale: 1.05,
-//                 boxShadow: "0 15px 25px rgba(0, 0, 0, 0.2)",
-//               }}
-//               whileTap={{ scale: 0.95 }}
-//               onClick={() => console.log('Book Appointment button clicked!')}
-//             >
-//               <i className="fa-solid fa-calendar-check" /> Book Appointment
-//             </motion.button>
-
-//             <motion.button
-//               className="flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-base text-white"
-//               style={{
-//                 background: "rgba(255, 255, 255, 0.15)",
-//                 backdropFilter: "blur(10px)",
-//                 border: "1px solid rgba(255, 255, 255, 0.25)",
-//               }}
-//               whileHover={{ background: "rgba(255, 255, 255, 0.25)" }}
-//               whileTap={{ scale: 0.95 }}
-//               onClick={() => console.log('View Our Work button clicked!')}
-//             >
-//               <i className="fa-solid fa-images" /> View Our Work
-//             </motion.button>
-//           </div>
-
-//           {/* 3 Service Icons with onClick handler */}
-//           <div className="flex justify-center gap-10 mt-16">
-//             {[
-//               { icon: "fa-scissors", text: "Hair Styling" },
-//               { icon: "fa-spa", text: "Skin Care" },
-//               { icon: "fa-crown", text: "Luxury Service" },
-//             ].map((item, i) => (
-//               <motion.div
-//                 key={i}
-//                 className="flex flex-col items-center text-center text-gray-100 cursor-pointer"
-//                 initial={{ opacity: 0, y: 20 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ duration: 0.6, delay: i * 0.2 }}
-//                 whileHover={{ scale: 1.1, y: -5 }}
-//                 onClick={() => console.log(`${item.text} icon clicked!`)}
-//               >
-//                 <div
-//                   className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-xl shadow-lg transition-all duration-300 ease-in-out"
-//                   style={{
-//                     background: "rgba(255, 255, 255, 0.1)",
-//                     backdropFilter: "blur(10px)",
-//                   }}
-//                 >
-//                   <i className={`fa-solid ${item.icon} text-white`} />
-//                 </div>
-//                 <div className="text-sm font-medium">{item.text}</div>
-//               </motion.div>
-//             ))}
-//           </div>
-//         </motion.div>
-//       </section>
-//     </>
-//   );
-// };
-
-
-// const HomePage = () => {
-//   return (
-//     <div>
-//       <Hero/>
-//       <About />
-//     </div>
-//   )
-// }
-
-// export default HomePage

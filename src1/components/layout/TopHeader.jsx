@@ -2,16 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube, Star } from 'lucide-react';
 
 const TopHeader = () => {
-    // A refined color palette based on your design
+    // New color palette based on the gradient
     const colors = {
-        primaryBg: '#2c0b70', // The deep indigo for the main navbar below
-        secondaryBg: '#120b2f', // The very dark background for this top header
-        textLight: '#e0e0e0', // Light text for readability on dark backgrounds
-        accentMagenta: '#5a30e8', // The vibrant purple from your brand
-        accentLime: '#007bff', // The accent blue from your brand
+        primaryText: '#1e4598',
+        accentGold: '#FFD700',
+        accentOrange: '#FF9800',
     };
 
     const socialLinks = [
@@ -59,13 +57,13 @@ const TopHeader = () => {
 
     return (
         <motion.header
-            className="relative py-1 px-4 md:px-6 z-50 overflow-hidden background-pulse-animation"
-            style={{ backgroundColor: colors.secondaryBg }}
+            className="relative py-1 px-4 md:px-6 z-50 overflow-hidden"
+            style={{ background: `linear-gradient(90deg, ${colors.accentOrange} 0%, ${colors.accentGold} 100%)` }}
             initial="hidden"
             animate="visible"
             variants={headerVariants}
         >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ color: colors.textLight }}>
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ color: colors.primaryText }}>
 
                 {/* Contact Information */}
                 <motion.div
@@ -84,13 +82,12 @@ const TopHeader = () => {
                             <motion.div
                                 className="p-2 rounded-full transition-all duration-300 group-hover:shadow-lg"
                                 style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                    color: colors.textLight
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    color: colors.primaryText
                                 }}
                                 whileHover={{
-                                    backgroundColor: colors.accentMagenta,
-                                    color: 'white',
-                                    boxShadow: `0 0 10px 2px ${colors.accentMagenta}`
+                                    backgroundColor: 'rgba(0,0,0,0.1)',
+                                    boxShadow: `0 0 10px 2px ${colors.primaryText}`
                                 }}
                             >
                                 {item.icon}
@@ -100,7 +97,7 @@ const TopHeader = () => {
                     ))}
                 </motion.div>
 
-                {/* Social Media Icons */}
+                {/* Social Media Icons & Google Review Button */}
                 <motion.div
                     className="flex items-center gap-4 mt-2 md:mt-0"
                     variants={containerVariants}
@@ -113,28 +110,37 @@ const TopHeader = () => {
                             href={social.url}
                             aria-label={`Visit us on ${social.url}`}
                             className="transition-transform duration-300 ease-in-out"
-                            style={{ color: colors.textLight }}
+                            style={{ color: colors.primaryText }}
                             variants={socialVariants}
                             whileHover={{
                                 scale: 1.2,
-                                color: colors.accentLime,
-                                filter: `drop-shadow(0 0 8px ${colors.accentLime})`
+                                color: 'white',
+                                filter: `drop-shadow(0 0 8px white)`
                             }}
                         >
                             {social.icon}
                         </motion.a>
                     ))}
+                    {/* Google Review Button */}
+                    <motion.a
+                        href="#"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold text-xs transition-all duration-300"
+                        style={{
+                            backgroundColor: colors.primaryText,
+                            color: colors.accentGold
+                        }}
+                        variants={socialVariants}
+                        whileHover={{
+                            scale: 1.1,
+                            backgroundColor: 'black',
+                            color: colors.accentGold
+                        }}
+                    >
+                        <Star size={14} />
+                        Google Review
+                    </motion.a>
                 </motion.div>
             </div>
-            <style jsx="true">{`
-                .background-pulse-animation {
-                    animation: color-pulse 10s infinite ease-in-out;
-                }
-                @keyframes color-pulse {
-                    0%, 100% { background-color: ${colors.secondaryBg}; }
-                    50% { background-color: ${colors.primaryBg}; }
-                }
-            `}</style>
         </motion.header>
     );
 };

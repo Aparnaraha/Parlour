@@ -5,6 +5,7 @@ import NavigationBar from './NavigationBar';
 import TopFooter from './TopFooter';
 import SiteFooter from './SiteFooter';
 import EnquiryLocateUs from '../ui/EnquiryLocateUs';
+import ServiceStepCounter from '../sections/ServiceStep';
 
 // The SiteLayout component is a container for all pages, providing a consistent header and footer.
 const SiteLayout = ({ children }) => {
@@ -16,8 +17,9 @@ const SiteLayout = ({ children }) => {
       <main className="flex-grow">
         {children}
       </main>
+      <ServiceStepCounter/>
       <TopFooter />
-      {/* <EnquiryLocateUs/> */}
+      <EnquiryLocateUs/>
       <SiteFooter />
     </div>
   );
