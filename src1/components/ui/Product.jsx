@@ -5,17 +5,8 @@ import { Heart, Info, Star, X } from "lucide-react";
 const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [likedProducts, setLikedProducts] = useState({});
-  const heroRef = useRef(null);
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Increased the transform range to make the parallax effect more noticeable
-  const y = useTransform(scrollYProgress, [0, 1], ["-25%", "25%"]);
-
-  // Section animation with parallax effect
+  // Section animation with float
   const sectionHeaderVariants = {
     hidden: { opacity: 0, y: -40 },
     visible: {
@@ -81,15 +72,11 @@ const Products = () => {
 
   return (
     <div className="font-sans">
-      {/* Parallax Hero (Optimized with Framer Motion) */}
-      <div className="relative h-[40vh] overflow-hidden flex flex-col justify-center items-center text-center text-white" ref={heroRef}>
-        <motion.img
-          src="https://images.pexels.com/photos/3992877/pexels-photo-3992877.jpeg"
-          alt="Parallax background"
-          // Set a larger height and scale to prevent white space
-          style={{ y, scale: 1.25 }} 
-          className="absolute inset-0 w-full h-[150%] object-cover"
-        />
+      {/* Parallax Hero (Optimized with CSS) */}
+      <div 
+        className="relative h-[40vh] overflow-hidden flex flex-col justify-center items-center text-center text-white bg-cover bg-center bg-fixed" 
+        style={{ backgroundImage: `url('https://images.pexels.com/photos/3992877/pexels-photo-3992877.jpeg')` }}
+      >
         <div className="absolute inset-0 bg-black/60" />
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={sectionHeaderVariants} className="relative z-10">
           <h1 className="text-5xl font-extrabold mb-3 tracking-wide drop-shadow-lg">Premium Grooming Products</h1>

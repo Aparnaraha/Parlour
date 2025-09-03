@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Phone, Star, MessageCircle, CheckCircle, Brush, Palette, Shield, ChevronDown, Camera, User, Sun, Briefcase, Heart, Camera as CameraIcon, Scissors, Zap, Award, Smile } from 'lucide-react';
 
@@ -87,8 +87,79 @@ const ParticleEffect = () => {
 };
 
 
+// --- Modal Components ---
+
+const EnquiryModal = ({ show, onClose }) => {
+    if (!show) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+            <div className="bg-[#21242c] text-white rounded-xl p-8 max-w-lg w-full relative border border-gray-700 shadow-2xl">
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">Enquire Now</h2>
+                <p className="text-gray-400 mb-6">Fill out the form below and we'll get back to you shortly.</p>
+                <form className="space-y-4">
+                    <div>
+                        <label htmlFor="name" className="block text-gray-300 font-medium mb-1">Name</label>
+                        <input type="text" id="name" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-gray-300 font-medium mb-1">Email</label>
+                        <input type="email" id="email" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    </div>
+                    <div>
+                        <label htmlFor="phone" className="block text-gray-300 font-medium mb-1">Phone</label>
+                        <input type="tel" id="phone" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    </div>
+                    <div>
+                        <label htmlFor="message" className="block text-gray-300 font-medium mb-1">Message</label>
+                        <textarea id="message" rows="4" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full px-8 py-3 rounded-xl font-semibold text-lg transition-all"
+                        style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }}
+                    >
+                        Send Enquiry
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+const CallModal = ({ show, onClose }) => {
+    if (!show) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+            <div className="bg-[#21242c] text-white rounded-xl p-8 max-w-sm w-full relative border border-gray-700 shadow-2xl text-center">
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <Phone size={48} className="text-yellow-400 mb-4 mx-auto" />
+                <h2 className="text-2xl font-bold mb-2">Call Now</h2>
+                <p className="text-gray-400 mb-4">You can reach us at:</p>
+                <a href="tel:+1234567890" className="text-3xl font-bold text-yellow-400 hover:underline">+1 (234) 567-890</a>
+                <p className="text-sm text-gray-500 mt-2">Tap the number to call directly.</p>
+            </div>
+        </div>
+    );
+};
+
 // --- Section 1: Makeup Service (Hero Section) ---
 const MakeupServiceHero = () => {
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -159,17 +230,17 @@ const MakeupServiceHero = () => {
               </motion.div>
             </div>
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-              <motion.button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all" style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }} whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 215, 0, 0.4)' }} whileTap={{ scale: 0.95 }}>
+              <motion.button onClick={() => setShowEnquiryModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all" style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }} whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 215, 0, 0.4)' }} whileTap={{ scale: 0.95 }}>
                 <MessageCircle size={20} className="mr-2" /> Enquiry
               </motion.button>
-              <motion.button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all border border-gray-700" style={{ background: 'linear-gradient(90deg, #3498db 0%, #2c3e50 100%)' }} whileHover={{ background: 'linear-gradient(90deg, #2c3e50 0%, #3498db 100%)' }} whileTap={{ scale: 0.95 }}>
+              <motion.button onClick={() => setShowCallModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all border border-gray-700" style={{ background: 'linear-gradient(90deg, #3498db 0%, #2c3e50 100%)' }} whileHover={{ background: 'linear-gradient(90deg, #2c3e50 0%, #3498db 100%)' }} whileTap={{ scale: 0.95 }}>
                 <Phone size={20} className="mr-2" /> Call Now
               </motion.button>
             </div>
           </div>
           <motion.div className="flex-1 flex justify-center p-6 sm:p-12 flex-grow relative max-w-xl w-full" variants={itemVariants}>
             <div className="relative w-full h-[450px] animated-border-container-image">
-              <img src="https://images.unsplash.com/photo-1608671167439-d8e2003c2a1a?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="A professional makeup artist applying makeup to a client" className="w-full h-full rounded-3xl shadow-2xl block object-cover" />
+              <img src="https://ua.cosmohit.ua/uploadfiles/fckeditor/muzhskoy-makiyazh-1.jpg" alt="A professional makeup artist applying makeup to a client" className="w-full h-full rounded-3xl shadow-2xl block object-cover" />
               <div className="absolute bottom-6 left-6 bg-gray-900/80 backdrop-blur-sm text-white p-4 rounded-lg text-sm font-medium flex items-center">
                 <Star size={20} className="mr-2 text-yellow-400" fill="currentColor" />
                 <div>4.9/5 <br /> Client Rating</div>
@@ -178,6 +249,9 @@ const MakeupServiceHero = () => {
           </motion.div>
         </motion.div>
       </section>
+
+      <EnquiryModal show={showEnquiryModal} onClose={() => setShowEnquiryModal(false)} />
+      <CallModal show={showCallModal} onClose={() => setShowCallModal(false)} />
     </>
   );
 };
@@ -189,61 +263,61 @@ const SignaturePackages = () => {
             title: "Gentleman's Groom",
             desc: "Face cleansing, light concealer, compact, brow grooming",
             price: "₹500 – ₹1,000",
-            img: "https://images.unsplash.com/photo-1596464531649-16b7f9411649?q=80&w=1964&auto=format&fit=crop"
+            img: "https://avatars.mds.yandex.net/i?id=b6ec274228c851ac62564b2bbbc464002545abdf-4234038-images-thumbs&n=13"
         },
         {
             title: "Dapper Night Look",
             desc: "Primer, foundation, contouring, light eye & lip makeup",
             price: "₹1,500 – ₹3,000",
-            img: "https://images.unsplash.com/photo-1588698944588-444a17953ff4?q=80&w=1964&auto=format&fit=crop"
+            img: "https://i.pinimg.com/736x/3f/54/ca/3f54cad4a7ec8eaae14e54624d967726.jpg"
         },
         {
             title: "Camera-Ready Look",
             desc: "High-definition makeup for shoots/events",
             price: "₹3,000 – ₹5,000",
-            img: "https://images.unsplash.com/photo-1596700869188-460d96d27ae8?q=80&w=1974&auto=format&fit=crop"
+            img: "https://i.pinimg.com/originals/4c/9f/bd/4c9fbd8c0230b1b98a3df85d76025753.jpg"
         },
         {
             title: "Oil-Free Matte Pack",
             desc: "Matte base, oil-control products, sweat-proof finish",
             price: "₹2,000 – ₹4,000",
-            img: "https://images.unsplash.com/photo-1598971616744-933e8b4e5486?q=80&w=1965&auto=format&fit=crop"
+            img: "https://www.lorealparis.com.ar/-/media/project/loreal/brand-sites/oap/americas/ar/articles/crema-antiarrugas-hombre-(1).jpg"
         },
         {
             title: "Flawless Air Finish",
             desc: "Airbrush foundation for even & long-lasting finish",
             price: "₹5,000 – ₹8,000",
-            img: "https://images.unsplash.com/photo-1621607590829-4d6d6284f2c9?q=80&w=1887&auto=format&fit=crop"
+            img: "https://i.ytimg.com/vi/k8LGIv8OTIw/maxresdefault.jpg"
         },
         {
             title: "Groom Spotlight",
             desc: "Full makeup, hairstyling, skin prep, basic grooming",
             price: "₹5,000 – ₹10,000",
-            img: "https://images.unsplash.com/photo-1621607592398-e7a6839d48b1?q=80&w=1887&auto=format&fit=crop"
+            img: "https://i.pinimg.com/736x/2c/05/e5/2c05e511dcb83b356007545ddaf2ae52.jpg"
         },
         {
             title: "Royal Groom Ritual",
             desc: "Facial, cleanup, makeup trial, event-day makeup",
             price: "₹8,000 – ₹15,000",
-            img: "https://images.unsplash.com/photo-1608671167439-d8e2003c2a1a?q=80&w=1964&auto=format&fit=crop"
+            img: "https://i.pinimg.com/originals/cc/a2/c5/cca2c5c5c95ebff8f7d5c3a879519754.jpg"
         },
         {
             title: "Portfolio Perfect",
             desc: "Makeup for modelling, acting, or personal shoots",
             price: "₹3,000 – ₹6,000",
-            img: "https://images.unsplash.com/photo-1541221799772-246e7f8472f7?q=80&w=1964&auto=format&fit=crop"
+            img: "https://avatars.mds.yandex.net/i?id=21733400a3f871b1bb1459a5e5335c62e5d1a239-4376415-images-thumbs&n=13"
         },
         {
             title: "SunShield Glow",
             desc: "Tan removal, makeup with sun-protection products",
             price: "₹2,000 – ₹4,000",
-            img: "https://images.unsplash.com/photo-1586749319808-16e54145f8f3?q=80&w=1887&auto=format&fit=crop"
+            img: "https://avatars.mds.yandex.net/i?id=b6ec274228c851ac62564b2bbbc464002545abdf-4234038-images-thumbs&n=13"
         },
         {
             title: "Boss Mode",
             desc: "Subtle makeup, skin-tone correction, hair set",
             price: "₹1,500 – ₹2,500",
-            img: "https://images.unsplash.com/photo-1579752695536-50893047d100?q=80&w=1887&auto=format&fit=crop"
+            img: "https://i.pinimg.com/736x/3f/54/ca/3f54cad4a7ec8eaae14e54624d967726.jpg"
         },
     ];
 
@@ -452,12 +526,14 @@ const WhyChooseUs = () => {
 // --- Photo Gallery
 const PhotoGallery = () => {
     const images = [
-        'https://images.unsplash.com/photo-1621607590829-4d6d6284f2c9?q=80&w=1887&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1598971616744-933e8b4e5486?q=80&w=1965&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1596700869188-460d96d27ae8?q=80&w=1974&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1621607592398-e7a6839d48b1?q=80&w=1887&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1596464531649-07b9a5435985?q=80&w=1964&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1596464531649-16b7f9411649?q=80&w=1964&auto=format&fit=crop',
+        'https://avatars.mds.yandex.net/i?id=21733400a3f871b1bb1459a5e5335c62e5d1a239-4376415-images-thumbs&n=13',
+        'https://i.pinimg.com/originals/cc/a2/c5/cca2c5c5c95ebff8f7d5c3a879519754.jpg',
+        'https://i.pinimg.com/736x/2c/05/e5/2c05e511dcb83b356007545ddaf2ae52.jpg',
+        'https://i.ytimg.com/vi/k8LGIv8OTIw/maxresdefault.jpg',
+        'https://www.lorealparis.com.ar/-/media/project/loreal/brand-sites/oap/americas/ar/articles/crema-antiarrugas-hombre-(1).jpg',
+        'https://i.pinimg.com/originals/4c/9f/bd/4c9fbd8c0230b1b98a3df85d76025753.jpg',
+        'https://i.pinimg.com/736x/3f/54/ca/3f54cad4a7ec8eaae14e54624d967726.jpg',
+        'https://avatars.mds.yandex.net/i?id=b6ec274228c851ac62564b2bbbc464002545abdf-4234038-images-thumbs&n=13'
     ];
 
     const { scrollYProgress } = useScroll();

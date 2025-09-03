@@ -8,11 +8,14 @@ import OurServices from "../ui/OurServices";
 import WhyChooseUs from "../ui/WhyChooseUs";
 import Testimonial from '../ui/Testimonial';
 import EnquiryLocateUs from "../ui/EnquiryLocateUs";
+import StillHaveQuestion from '../ui/StillHaveQuestion';
+import OurGallery from '../ui/Gallerywhy'
 import Products from '../ui/Product'; // Renamed import to Products for clarity
 import heroVideo from "../../img/hero.mp4";
 import heroImg1 from "../../img/hero1.jpeg";
 import heroImg2 from "../../img/hero2.jpeg";
 import FAQSection from '../ui/FaqSection'
+import OurPromise from '../ui/OurPromise'
 
 const slides = [
   {
@@ -250,8 +253,11 @@ const HomePage = () => {
           <About />
           <OurServices />
           <WhyChooseUs />
+          <OurGallery/>
           <Products />
           <Testimonial />
+          <OurPromise/>
+          <StillHaveQuestion/>
           <FAQSection/>
         </>
       )}

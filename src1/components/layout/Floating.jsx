@@ -4,154 +4,98 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Phone, ArrowUp } from "lucide-react";
+import EnquiryFormModal from '../ui/EnquiryModalForm'; // Import your custom modal component
+
+// A simple debounce utility function
+const debounce = (func, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 
 const FloatingButtons = () => {
-  const [showEnquiry, setShowEnquiry] = useState(false);
-  const [showScroll, setShowScroll] = useState(false);
+  const [showEnquiry, setShowEnquiry] = useState(false);
+  const [showScroll, setShowScroll] = useState(false);
 
-  // Show scroll-to-top only when scrolled down
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScroll(window.scrollY > 300);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Show scroll-to-top only when scrolled down
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScroll(window.scrollY > 300);
+    };
+    const debouncedHandleScroll = debounce(handleScroll, 100);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    window.addEventListener("scroll", debouncedHandleScroll);
+    return () => window.removeEventListener("scroll", debouncedHandleScroll);
+  }, []);
 
-  const buttonBase =
-    "relative flex items-center justify-center w-14 h-14 rounded-full shadow-xl text-white transition-all duration-300";
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  return (
-    <>
-      {/* WhatsApp + Enquiry (bottom right corner) */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50">
-        {/* WhatsApp (pulsating ring) */}
-        <div className="relative group">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
-          <motion.a
-            href="https://wa.me/919999999999"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${buttonBase} bg-emerald-500 hover:bg-emerald-600`}
-            whileHover={{ scale: 1.1 }}
-          >
-            <MessageCircle size={26} />
-          </motion.a>
-          {/* Tooltip */}
-          <span className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-1 text-sm text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition">
-            Chat on WhatsApp
-          </span>
-        </div>
+  const buttonBase =
+    "relative flex items-center justify-center w-14 h-14 rounded-full shadow-xl text-white transition-all duration-300";
 
-        {/* Enquiry (heartbeat animation) */}
-        <div className="relative group">
-          <motion.button
-            onClick={() => setShowEnquiry(true)}
-            className={`${buttonBase} bg-yellow-500 hover:bg-yellow-600`}
-            animate={{
-              scale: [1, 1.15, 1], // beating effect
-            }}
-            transition={{
-              duration: 1.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            whileHover={{ scale: 1.2 }}
-          >
-            <Phone size={26} />
-          </motion.button>
-          {/* Tooltip */}
-          <span className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-1 text-sm text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition">
-            Send Enquiry
-          </span>
-        </div>
-      </div>
+  return (
+    <>
+      {/* Floating Buttons Layer */}
+      <div className="fixed inset-0 pointer-events-none z-50">
+        {/* WhatsApp + Enquiry Buttons (bottom right corner) */}
+        <div className="absolute bottom-6 right-6 flex flex-col gap-4 pointer-events-auto">
+          {/* WhatsApp (pulsating ring) */}
+          <motion.a
+            href="https://wa.me/918093011746"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 group-hover:animate-ping"></span>
+            <span
+              className={`${buttonBase} bg-emerald-500 hover:bg-emerald-600`}
+            >
+              <Phone size={24} />
+            </span>
+          </motion.a>
 
-      {/* Scroll to Top (bottom left side, visible only after scroll) */}
-      {showScroll && (
-        <div className="relative group">
-          <motion.button
-            onClick={scrollToTop}
-            className={`fixed bottom-6 left-6 ${buttonBase} bg-blue-600 hover:bg-blue-700`}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            whileHover={{ scale: 1.1 }}
-          >
-            <ArrowUp size={26} />
-          </motion.button>
-          {/* Tooltip */}
-          <span className="absolute left-20 bottom-10 px-3 py-1 text-sm text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition">
-            Back to Top
-          </span>
-        </div>
-      )}
+          {/* Enquiry */}
+          <motion.button
+            onClick={() => setShowEnquiry(true)}
+            className={`${buttonBase} bg-gradient-to-r from-yellow-400 to-yellow-600`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <MessageCircle size={24} />
+          </motion.button>
+        </div>
 
-      {/* Enquiry Drawer (bottom side with backdrop) */}
-      <AnimatePresence>
-        {showEnquiry && (
-          <>
-            {/* Dark backdrop */}
-            <motion.div
-              className="fixed inset-0 bg-black/40 z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowEnquiry(false)}
-            ></motion.div>
-
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="fixed bottom-0 left-0 w-full bg-white shadow-2xl rounded-t-2xl p-6 z-50"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Send an Enquiry ✨
-                </h2>
-                <button
-                  className="text-gray-500 hover:text-gray-800 text-lg"
-                  onClick={() => setShowEnquiry(false)}
-                >
-                  ✕
-                </button>
-              </div>
-
-              <form className="flex flex-col gap-4">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  className="border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"
-                />
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  className="border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"
-                />
-                <textarea
-                  placeholder="Your Message"
-                  rows="3"
-                  className="border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none"
-                ></textarea>
-                <button
-                  type="submit"
-                  className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold rounded-lg py-3 hover:shadow-md"
-                >
-                  Submit
-                </button>
-              </form>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
-  );
+        {/* Scroll-to-top button */}
+        <AnimatePresence>
+          {showScroll && (
+            <motion.button
+              onClick={scrollToTop}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 rounded-full bg-gray-700 text-white shadow-lg pointer-events-auto"
+            >
+              <ArrowUp size={24} />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+    
+    {/* This is where your custom modal is now placed */}
+    <EnquiryFormModal 
+      isOpen={showEnquiry} 
+      onClose={() => setShowEnquiry(false)} 
+    />
+    </>
+  );
 };
 
 export default FloatingButtons;

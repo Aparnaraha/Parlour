@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Scissors } from "lucide-react";
 import img from "../../img/hero1.jpeg"
 
 const WhyChooseUs = () => {
@@ -57,6 +58,9 @@ const WhyChooseUs = () => {
 
       <section className="relative py-20 bg-[#1d212a] font-['Inter',sans-serif] text-center text-white">
         {/* Heading */}
+        <div className="inline-flex items-center px-4 py-2 mb-5 border border-white/40 rounded-full text-yellow-400 font-semibold text-sm bg-white/10 backdrop-blur-sm shadow-sm">
+                    <Scissors className="w-4 h-4 mr-2 text-yellow-400" /> Why Choose Us?
+                  </div>
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -76,7 +80,7 @@ const WhyChooseUs = () => {
             Why Choose Allex Gents Parlour
           </motion.h2>
           <motion.p
-            className="max-w-2xl mx-auto text-gray-300 mb-12"
+            className="max-w-2xl mx-auto text-gray-300 text-base mb-12"
             variants={itemVariants}
           >
             At <span className="text-yellow-400 font-semibold">Allex Gents Parlour</span>, 
@@ -116,7 +120,7 @@ const WhyChooseUs = () => {
                 <div className="card-content p-6 shadow-lg flex items-center gap-4 text-left transition-all hover:shadow-yellow-500/30">
                   <i className={`fa-solid ${card.icon} text-yellow-400 text-3xl`} />
                   <div>
-                    <h4 className="font-bold text-lg">{card.title}</h4>
+                    <h4 className="font-bold text-xl">{card.title}</h4>
                     <p className="text-gray-300 text-sm">{card.desc}</p>
                   </div>
                 </div>
@@ -160,7 +164,7 @@ const WhyChooseUs = () => {
               >
                 <div className="card-content p-6 shadow-lg flex items-center gap-4 text-right transition-all hover:shadow-yellow-500/30">
                   <div className="flex-1">
-                    <h4 className="font-bold text-lg">{card.title}</h4>
+                    <h4 className="font-bold text-xl">{card.title}</h4>
                     <p className="text-gray-300 text-sm">{card.desc}</p>
                   </div>
                   <i className={`fa-solid ${card.icon} text-yellow-400 text-3xl`} />

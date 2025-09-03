@@ -91,22 +91,25 @@ const PremiumServiceStepCounter = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         {/* Section Title */}
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-16"
+        <motion.div
+          className="mx-auto max-w-2xl lg:text-center"
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-            How to Apply
-          </span>{" "}
-          for Our Services
-        </motion.h2>
-
-        {/* Horizontal Stepper with elegant animations */}
+          <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+            Steps to follow
+          </span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+              Apply
+            </span>{" "}
+            for Our Services
+          </h2>
+        </motion.div>
         <motion.div
-          className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-6"
+          className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-6 mt-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -122,7 +125,6 @@ const PremiumServiceStepCounter = () => {
                   boxShadow: "0 20px 40px rgba(0,0,0,0.15), 0 0 20px rgba(255,165,0,0.25)",
                 }}
               >
-                {/* Step number badge with animated hover */}
                 <motion.div
                   className="absolute -top-4 -left-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-full font-bold shadow-md"
                   whileHover={{ scale: 1.2, rotate: 15 }}
@@ -137,7 +139,6 @@ const PremiumServiceStepCounter = () => {
                 <p className="text-gray-600 text-sm">{step.description}</p>
               </motion.div>
 
-              {/* Animated Arrow except after last step */}
               {index < steps.length - 1 && (
                 <motion.div
                   className="hidden md:flex items-center justify-center"

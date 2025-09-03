@@ -3,6 +3,9 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { CheckCircle, HeartHandshake, ShieldCheck, Sparkles, User, Medal } from 'lucide-react';
 import ParticleEffect from '../ui/ParticleEffect';
 import AnimatedCounter from '../ui/AnimatedCounter';
+import StillHaveQuestion from '../ui/StillHaveQuestion';
+import OurPromise from '../ui/OurPromise';
+import Testimonials from '../ui/Testimonial'
 
 // A reusable component with a solid background and a powerful parallax effect
 const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, overlayTexts }) => {
@@ -367,19 +370,19 @@ const OurTeam = () => {
         {
           name: "Alex Smith",
           role: "Founder & Master Barber",
-          photoUrl: "https://plus.unsplash.com/premium_photo-1661645788141-8196a45fb483?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFyYmVyfGVufDB8fDB8fHww",
+          photoUrl: "https://i.pinimg.com/originals/f7/f4/f4/f7f4f41f15a26d029d1af40964c8ed50.jpg",
           description: "Alex founded our salon with a passion for precision cuts and a vision for exceptional client care. He leads our team with years of industry expertise.",
         },
         {
           name: "Mia Johnson",
           role: "Lead Stylist",
-          photoUrl: "https://plus.unsplash.com/photo-1599370422204-7a35c5c96030?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJhcmJlcnxlbnwwfHwwfHx8MA%3D%3D",
+          photoUrl: "https://i.pinimg.com/originals/ab/5e/ee/ab5eee9c91e0aa79c16c64b533001538.jpg",
           description: "Mia specializes in modern styling and color work, constantly staying ahead of trends. Her artistic flair brings every client's vision to life.",
         },
         {
           name: "Chris Lee",
           role: "Grooming Specialist",
-          photoUrl: "https://images.unsplash.com/photo-1596484393963-31744b6f001c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGJhcmJlcnxlbnwwfHwwfHx8MA%3D%3D",
+          photoUrl: "https://i.pinimg.com/736x/c8/32/94/c83294e8a3a4f1cf2e0d379737a6209c.jpg",
           description: "Chris is our resident expert in beard care and luxury shaves. His meticulous attention to detail ensures a clean, sharp look every time.",
         },
     ];
@@ -526,8 +529,12 @@ const AboutPage = () => {
               </div>
             </section>
             <CoreValues />
-            <OurTeam />
             <StatsCounter />
+            <OurPromise/>
+            <StillHaveQuestion/>
+            <OurTeam />
+            <Testimonials/>
+            
         </main>
     );
 };

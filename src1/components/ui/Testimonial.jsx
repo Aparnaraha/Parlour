@@ -49,6 +49,10 @@ const testimonials = [
 ];
 
 const TestimonialSection = () => {
+  const handleReviewClick = () => {
+    window.open("https://share.google/kAcan8A0nWy0aQZTp", "_blank");
+  };
+
   return (
     <section className="bg-[#1d212a] py-16 px-4 md:px-8 font-['Inter',sans-serif]">
       <FontAwesome />
@@ -159,6 +163,7 @@ const TestimonialSection = () => {
         {/* CTA */}
         <div className="text-center mt-10">
           <button
+            onClick={handleReviewClick}
             className="relative px-7 py-2.5 rounded-full font-semibold text-white
                        bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500
                        bg-[length:200%_100%] transition-all duration-300

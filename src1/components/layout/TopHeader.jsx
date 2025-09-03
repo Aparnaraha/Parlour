@@ -55,94 +55,95 @@ const TopHeader = () => {
         visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
     };
 
-    return (
-        <motion.header
-            className="relative py-1 px-4 md:px-6 z-50 overflow-hidden"
-            style={{ background: `linear-gradient(90deg, ${colors.accentOrange} 0%, ${colors.accentGold} 100%)` }}
-            initial="hidden"
-            animate="visible"
-            variants={headerVariants}
-        >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ color: colors.primaryText }}>
+   return (
+    <motion.header
+        className="relative py-1 px-4 md:px-6 z-50 overflow-hidden"
+        style={{ background: `linear-gradient(90deg, ${colors.accentOrange} 0%, ${colors.accentGold} 100%)` }}
+        initial="hidden"
+        animate="visible"
+        variants={headerVariants}
+    >
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ color: colors.primaryText }}>
 
-                {/* Contact Information */}
-                <motion.div
-                    className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    {contactInfo.map((item, index) => (
+            {/* Contact Information */}
+            <motion.div
+                className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {contactInfo.map((item, index) => (
+                    <motion.div
+                        key={index}
+                        className="flex items-center gap-2 group cursor-pointer"
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                    >
                         <motion.div
-                            key={index}
-                            className="flex items-center gap-2 group cursor-pointer"
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                        >
-                            <motion.div
-                                className="p-2 rounded-full transition-all duration-300 group-hover:shadow-lg"
-                                style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                    color: colors.primaryText
-                                }}
-                                whileHover={{
-                                    backgroundColor: 'rgba(0,0,0,0.1)',
-                                    boxShadow: `0 0 10px 2px ${colors.primaryText}`
-                                }}
-                            >
-                                {item.icon}
-                            </motion.div>
-                            <span className="truncate">{item.text}</span>
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* Social Media Icons & Google Review Button */}
-                <motion.div
-                    className="flex items-center gap-4 mt-2 md:mt-0"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    {socialLinks.map((social, index) => (
-                        <motion.a
-                            key={index}
-                            href={social.url}
-                            aria-label={`Visit us on ${social.url}`}
-                            className="transition-transform duration-300 ease-in-out"
-                            style={{ color: colors.primaryText }}
-                            variants={socialVariants}
+                            className="p-2 rounded-full transition-all duration-300 group-hover:shadow-lg"
+                            style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                color: colors.primaryText
+                            }}
                             whileHover={{
-                                scale: 1.2,
-                                color: 'white',
-                                filter: `drop-shadow(0 0 8px white)`
+                                backgroundColor: 'rgba(0,0,0,0.1)',
+                                boxShadow: `0 0 10px 2px ${colors.primaryText}`
                             }}
                         >
-                            {social.icon}
-                        </motion.a>
-                    ))}
-                    {/* Google Review Button */}
+                            {item.icon}
+                        </motion.div>
+                        <span className="truncate">{item.text}</span>
+                    </motion.div>
+                ))}
+            </motion.div>
+
+            {/* Social Media Icons & Google Review Button */}
+            <motion.div
+                className="flex items-center gap-4 mt-2 md:mt-0"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {socialLinks.map((social, index) => (
                     <motion.a
-                        href="#"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold text-xs transition-all duration-300"
-                        style={{
-                            backgroundColor: colors.primaryText,
-                            color: colors.accentGold
-                        }}
+                        key={index}
+                        href={social.url}
+                        aria-label={`Visit us on ${social.url}`}
+                        className="transition-transform duration-300 ease-in-out"
+                        style={{ color: colors.primaryText }}
                         variants={socialVariants}
                         whileHover={{
-                            scale: 1.1,
-                            backgroundColor: 'black',
-                            color: colors.accentGold
+                            scale: 1.2,
+                            color: 'white',
+                            filter: `drop-shadow(0 0 8px white)`
                         }}
                     >
-                        <Star size={14} />
-                        Google Review
+                        {social.icon}
                     </motion.a>
-                </motion.div>
-            </div>
-        </motion.header>
-    );
+                ))}
+                {/* Google Review Button */}
+                <motion.a
+                    href="https://share.google/b2DNrn74ijLl5B6gc"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold text-xs transition-all duration-300"
+                    style={{
+                        backgroundColor: colors.primaryText,
+                        color: colors.accentGold
+                    }}
+                    variants={socialVariants}
+                    whileHover={{
+                        scale: 1.1,
+                        backgroundColor: 'black',
+                        color: colors.accentGold
+                    }}
+                >
+                    <Star size={14} />
+                    Google Review
+                </motion.a>
+            </motion.div>
+        </div>
+    </motion.header>
+);
+
 };
 
 export default TopHeader;

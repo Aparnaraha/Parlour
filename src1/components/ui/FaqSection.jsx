@@ -283,200 +283,123 @@ const PremiumFaqSection = () => {
   const isFiltered = selectedCategory || searchQuery;
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-white to-gray-50 overflow-hidden flex items-center justify-center">
-      <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-        <motion.h2
-          className={`text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg transition-all duration-500 ${
-            selectedCategory
-              ? "bg-clip-text text-transparent bg-gradient-to-r " +
-                categoryGradients[selectedCategory]
-              : "text-gray-900"
-          }`}
-          initial={{ opacity: 0, y: -40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {selectedCategory ? (
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={selectedCategory}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-              >
-                {categoryNames[selectedCategory]} FAQs
-              </motion.span>
-            </AnimatePresence>
-          ) : (
-            <AnimatePresence mode="wait">
-              <motion.span
-                key="faq-heading"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-              >
-                <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-                  Frequently
-                </span>{" "}
-                Asked Questions
-              </motion.span>
-            </AnimatePresence>
-          )}
-        </motion.h2>
+    <>
+      
+      <section className="relative py-20 bg-gradient-to-br from-white to-gray-50 overflow-hidden flex items-center justify-center">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
+          <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+            FAQ
+          </span>
+          <motion.h2
+            className={`text-4xl md:text-5xl font-extrabold mb-6 drop-shadow-lg transition-all duration-500 ${
+              selectedCategory
+                ? "bg-clip-text text-transparent bg-gradient-to-r " +
+                  categoryGradients[selectedCategory]
+                : "text-gray-900"
+            }`}
+            initial={{ opacity: 0, y: -40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            {selectedCategory ? (
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={selectedCategory}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {categoryNames[selectedCategory]} FAQs
+                </motion.span>
+              </AnimatePresence>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key="faq-heading"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
+                    Frequently
+                  </span>{" "}
+                  Asked Questions
+                </motion.span>
+              </AnimatePresence>
+            )}
+          </motion.h2>
 
-        <motion.p className="text-gray-600 mb-8 max-w-2xl mx-auto drop-shadow-sm">
-          Browse our topics or search for the answers you're looking for.
-        </motion.p>
+          <motion.p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto drop-shadow-sm">
+            Browse our topics or search for the answers you're looking for.
+          </motion.p>
 
-        <motion.div
-          className="relative w-full max-w-xl mx-auto mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search all FAQs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-4 pl-12 pr-6 text-gray-900 border-2 border-transparent rounded-full shadow-lg transition-all duration-500 bg-white/80 backdrop-blur-md focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
-            />
-            <motion.div
-              className="absolute inset-y-0 left-0 flex items-center pl-4"
-              initial={{ color: "#9ca3af" }}
-              animate={{
-                color: searchQuery.length > 0 ? "#f97316" : "#9ca3af",
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              <Search className="h-5 w-5" />
-            </motion.div>
-          </div>
-        </motion.div>
-
-        <AnimatePresence mode="wait">
-          {!isFiltered ? (
-            <motion.div
-              key="initial-view"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-            >
+          <motion.div
+            className="relative w-full max-w-xl mx-auto mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search all FAQs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full py-4 pl-12 pr-6 text-gray-900 border-2 border-transparent rounded-full shadow-lg transition-all duration-500 bg-white/80 backdrop-blur-md focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+              />
               <motion.div
-                className="flex flex-wrap justify-center gap-4 mb-8"
-                variants={buttonContainer}
-                initial="hidden"
-                animate="show"
-              >
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    onClick={() => handleCategorySelect(category)}
-                    className="px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform-gpu
-                       bg-white/60 text-gray-700 shadow-xl hover:bg-white hover:shadow-2xl hover:-translate-y-1 flex items-center gap-2"
-                    variants={buttonItem}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {categoryIcons[category]}
-                    {categoryNames[category]}
-                  </motion.button>
-                ))}
-              </motion.div>
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
-              >
-                {faqs.slice(0, 2).map((faq) => (
-                  <motion.div
-                    key={faq.id}
-                    className="relative bg-white/70 backdrop-blur-xl rounded-2xl p-6 overflow-hidden cursor-pointer
-                    transition-all duration-300 transform-gpu group"
-                    variants={cardItem}
-                    whileHover={{
-                      scale: 1.02,
-                      boxShadow:
-                        "0 20px 40px rgba(0,0,0,0.1), 0 0 20px rgba(255,165,0,0.3)",
-                    }}
-                    onClick={() => toggleFaq(faq.id)}
-                  >
-                    <div className="absolute inset-0 rounded-2xl border-2 border-white/50 pointer-events-none" />
-                    <div className="relative z-10 flex items-center justify-between">
-                      <h3 className="text-lg md:text-xl font-semibold text-gray-900 text-left">
-                        {faq.question}
-                      </h3>
-                      <motion.div
-                        animate={{ rotate: openId === faq.id ? 180 : 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 25,
-                        }}
-                      >
-                        <ChevronDown className="h-6 w-6 text-orange-500 drop-shadow-md" />
-                      </motion.div>
-                    </div>
-                    <AnimatePresence>
-                      {openId === faq.id && (
-                        <motion.div
-                          layout
-                          initial={{ opacity: 0 }}
-                          animate={{
-                            opacity: 1,
-                            transition: {
-                              delay: 0.1,
-                              type: "spring",
-                              stiffness: 100,
-                              damping: 15,
-                            },
-                          }}
-                          exit={{
-                            opacity: 0,
-                            transition: { duration: 0.2 },
-                          }}
-                          className="px-0 pb-0 pt-4 text-gray-600 text-left"
-                        >
-                          <p>{faq.answer}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="filtered-view"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <motion.button
-                onClick={handleBack}
-                className="mb-8 flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="absolute inset-y-0 left-0 flex items-center pl-4"
+                initial={{ color: "#9ca3af" }}
+                animate={{
+                  color: searchQuery.length > 0 ? "#f97316" : "#9ca3af",
+                }}
                 transition={{ duration: 0.3 }}
               >
-                <ArrowLeft className="h-5 w-5" /> Back to Categories
-              </motion.button>
-              
+                <Search className="h-5 w-5" />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            {!isFiltered ? (
               <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
+                key="initial-view"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
               >
-                {displayFaqs.length > 0 ? (
-                  displayFaqs.map((faq) => (
+                <motion.div
+                  className="flex flex-wrap justify-center gap-4 mb-8"
+                  variants={buttonContainer}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {categories.map((category) => (
+                    <motion.button
+                      key={category}
+                      onClick={() => handleCategorySelect(category)}
+                      className="px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform-gpu
+                       bg-white/60 text-gray-700 shadow-xl hover:bg-white hover:shadow-2xl hover:-translate-y-1 flex items-center gap-2"
+                      variants={buttonItem}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {categoryIcons[category]}
+                      {categoryNames[category]}
+                    </motion.button>
+                  ))}
+                </motion.div>
+                <motion.div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {faqs.slice(0, 2).map((faq) => (
                     <motion.div
                       key={faq.id}
                       className="relative bg-white/70 backdrop-blur-xl rounded-2xl p-6 overflow-hidden cursor-pointer
@@ -491,7 +414,7 @@ const PremiumFaqSection = () => {
                     >
                       <div className="absolute inset-0 rounded-2xl border-2 border-white/50 pointer-events-none" />
                       <div className="relative z-10 flex items-center justify-between">
-                        <h3 className="text-lg md:text-xl font-semibold text-gray-900 text-left">
+                        <h3 className="text-xl font-semibold text-gray-900 text-left">
                           {faq.question}
                         </h3>
                         <motion.div
@@ -530,23 +453,106 @@ const PremiumFaqSection = () => {
                         )}
                       </AnimatePresence>
                     </motion.div>
-                  ))
-                ) : (
-                  <motion.p
-                    className="text-gray-500 text-lg py-10"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    No results found. Please try a different search or category.
-                  </motion.p>
-                )}
+                  ))}
+                </motion.div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+            ) : (
+              <motion.div
+                key="filtered-view"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.button
+                  onClick={handleBack}
+                  className="mb-8 flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ArrowLeft className="h-5 w-5" /> Back to Categories
+                </motion.button>
+              
+                <motion.div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {displayFaqs.length > 0 ? (
+                    displayFaqs.map((faq) => (
+                      <motion.div
+                        key={faq.id}
+                        className="relative bg-white/70 backdrop-blur-xl rounded-2xl p-6 overflow-hidden cursor-pointer
+                        transition-all duration-300 transform-gpu group"
+                        variants={cardItem}
+                        whileHover={{
+                          scale: 1.02,
+                          boxShadow:
+                            "0 20px 40px rgba(0,0,0,0.1), 0 0 20px rgba(255,165,0,0.3)",
+                        }}
+                        onClick={() => toggleFaq(faq.id)}
+                      >
+                        <div className="absolute inset-0 rounded-2xl border-2 border-white/50 pointer-events-none" />
+                        <div className="relative z-10 flex items-center justify-between">
+                          <h3 className="text-xl font-semibold text-gray-900 text-left">
+                            {faq.question}
+                          </h3>
+                          <motion.div
+                            animate={{ rotate: openId === faq.id ? 180 : 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 300,
+                              damping: 25,
+                            }}
+                          >
+                            <ChevronDown className="h-6 w-6 text-orange-500 drop-shadow-md" />
+                          </motion.div>
+                        </div>
+                        <AnimatePresence>
+                          {openId === faq.id && (
+                            <motion.div
+                              layout
+                              initial={{ opacity: 0 }}
+                              animate={{
+                                opacity: 1,
+                                transition: {
+                                  delay: 0.1,
+                                  type: "spring",
+                                  stiffness: 100,
+                                  damping: 15,
+                                },
+                              }}
+                              exit={{
+                                opacity: 0,
+                                transition: { duration: 0.2 },
+                              }}
+                              className="px-0 pb-0 pt-4 text-gray-600 text-left"
+                            >
+                              <p>{faq.answer}</p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.p
+                      className="text-gray-500 text-lg py-10"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      No results found. Please try a different search or category.
+                    </motion.p>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+    </>
   );
 };
 

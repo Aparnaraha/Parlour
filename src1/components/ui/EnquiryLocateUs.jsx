@@ -48,6 +48,9 @@ const Enquiry = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
+            <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+              Contact Us
+            </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
               Get In{" "}
               <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
@@ -199,7 +202,7 @@ const Enquiry = () => {
         >
           <iframe
             title="Google Map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1473.3381828647258!2d85.81389059694043!3d20.28485403221552!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19093b2afdbf1d%3A0xdad1afbbb42c1f7!2sAllex%20Gents%20Parlour!5e0!3m2!1sen!2sin!4v1693526437421!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3742.607421295963!2d85.8016480749028!3d20.27986068166585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1900138d629a73%3A0x600b39695d13783c!2sIRC%20Village%2C%20Nayapalli%2C%20Bhubaneswar%2C%20Odisha%20751015%2C%20India!5e0!3m2!1sen!2sus!4sbd!4v1693892749911!5m2!1sen!2sus"
             width="100%"
             height="100%"
             allowFullScreen=""
