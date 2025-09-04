@@ -1,30 +1,37 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { Phone, Mail, MapPin, ArrowUp } from "lucide-react";
-import StillQuestionsSection from "../ui/StillHaveQuestion";
-import ThemeChanger from "../ui/ThemeChanger";
-import Contact from "../ui/EnquiryLocateUs";
-import TopHeader from '../layout/TopHeader';
-import NavigationBar from '../layout/NavigationBar';
-import TopFooter from '../layout/TopFooter';
-import SiteFooter from '../layout/SiteFooter';
-import FloatingButtons from '../layout/Floating'; 
-import FAQ from "../ui/FaqSection";
+import { motion, AnimatePresence } from "framer-motion";
+import { Phone, Mail, MapPin, ArrowUp, Sun, Moon } from "lucide-react";
+import FAQ from '../ui/FaqSection';
+import StillQuestionsSection from '../ui/StillHaveQuestion'
+
+/**
+ * A simple theme changer button that toggles between light and dark themes.
+ * @param {object} props - The component props.
+ * @param {string} props.theme - The current theme ('light' or 'dark').
+ * @param {Function} props.toggleTheme - The function to toggle the theme.
+ */
+const ThemeChanger = ({ theme, toggleTheme }) => (
+  <button
+    onClick={toggleTheme}
+    className="p-3 rounded-full shadow-lg transition-transform duration-300"
+  >
+    {theme === "dark" ? <Sun size={24} className="text-yellow-400" /> : <Moon size={24} className="text-gray-900" />}
+  </button>
+);
+
+
 /**
  * Hero section for the contact page, featuring a background image, animated text, and theme toggle.
  */
 const HeroContact = ({ theme, colors, toggleTheme }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
-
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.2 },
+      transition: { duration: 0.4, ease: "easeOut", staggerChildren: 0.1 },
     },
   };
 
@@ -39,25 +46,25 @@ const HeroContact = ({ theme, colors, toggleTheme }) => {
 
   return (
     <section
-      className={`relative h-[40vh] flex items-center justify-center overflow-hidden text-center transition-colors duration-500 ${colors.bg}`}
+      // Fix: Removed the fixed height class h-[40vh] to allow content to dictate height.
+      className={`relative flex items-center justify-center overflow-hidden text-center transition-colors duration-500 ${colors.bg} py-16`}
     >
       {/* Background image */}
-      <div className="absolute inset-0">
+      {/* <div className="absolute inset-0">
         <div
           className={`w-full h-full bg-cover bg-center opacity-10`}
           style={{
             backgroundImage:
-              'url("https://images.unsplash.com/photo-1596464531649-07b9a5435985?q=80&w=1964&auto=format&fit=crop")',
+              'url("https://avatars.mds.yandex.net/i?id=31f0b18eac8ca50ebe0aff889f57dfd9829b80a1-12538254-images-thumbs&n=13")',
           }}
         />
-      </div>
+      </div> */}
 
       {/* Hero content */}
       <motion.div
-        ref={ref}
         className="relative z-20 px-4 flex flex-col items-center"
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
+        animate="visible"
         variants={containerVariants}
       >
         <motion.h1
@@ -95,11 +102,8 @@ const HeroContact = ({ theme, colors, toggleTheme }) => {
  * Hardcoded to light theme for better readability.
  */
 const ReachOutSection = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
-
+  // Fix: Removed useInView hook to ensure the section is visible immediately.
   const sectionVariants = {
-    hidden: { opacity: 0, y: 50 },
     visible: {
       opacity: 1,
       y: 0,
@@ -108,7 +112,6 @@ const ReachOutSection = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
@@ -124,10 +127,9 @@ const ReachOutSection = () => {
 
   return (
     <motion.section
-      ref={ref}
       className={`relative py-20 px-4 md:px-6 ${lightThemeColors.sectionBgGradient}`}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
+      initial={{ opacity: 0, y: 50 }}
+      animate="visible"
       variants={sectionVariants}
     >
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -202,7 +204,7 @@ const ReachOutSection = () => {
             variants={itemVariants}
             className={`text-xl font-bold mb-4 ${lightThemeColors.text}`}
           >
-            Quick Inquiry
+            Contact Us
           </motion.h3>
           <form className="space-y-4">
             <motion.div variants={itemVariants}>
@@ -221,6 +223,24 @@ const ReachOutSection = () => {
                 style={{ borderRadius: 0 }}
               />
             </motion.div>
+            <motion.div variants={itemVariants}>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Your Phone Number"
+                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                style={{ borderRadius: 0 }}
+                required
+              />
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <textarea name="message" placeholder="Your Message / Inquiry" 
+                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                style={{ borderRadius: 0 }}
+                required
+              />
+            </motion.div>
+            
             <motion.button
               variants={itemVariants}
               type="submit"
@@ -234,7 +254,6 @@ const ReachOutSection = () => {
           </form>
         </div>
 
-        {/* Map */}
         {/* Map */}
         <div
           className={`p-0 overflow-hidden shadow-lg flex flex-col`}
@@ -293,7 +312,7 @@ const ReachOutSection = () => {
  * Main Contact Page
  */
 const ContactPage = () => {
-  const [theme, setTheme] = useState("dark"); // ✅ Default dark
+  const [theme, setTheme] = useState("dark"); // Default dark theme
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -334,32 +353,11 @@ const ContactPage = () => {
         colors={colorsForPage}
         toggleTheme={toggleTheme}
       />
-<ReachOutSection />
-      
+      <ReachOutSection />
 
       {/* Still Have Questions */}
       <StillQuestionsSection />
-      <FAQ/>
-    
-
-      {/* Scroll To Top */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            className={`fixed bottom-8 right-8 p-4 rounded-full shadow-lg z-50 ${colorsForPage.accentButton}`}
-            onClick={scrollToTop}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ArrowUp size={24} />
-          </motion.button>
-        )}
-      </AnimatePresence>
-      
-      
+      <FAQ />
     </div>
   );
 };

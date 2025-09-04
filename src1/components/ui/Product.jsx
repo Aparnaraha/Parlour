@@ -1,32 +1,38 @@
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Info, Star, X } from "lucide-react";
+import photo0 from "../../img/photo0.jpg";
+import photo1 from "../../img/photo13.jpg";
+import photo2 from "../../img/photo2.jpg";
+import photo3 from "../../img/photo3.jpg";
+import photo4 from "../../img/photo4.jpg";
+import photo5 from "../../img/photo5.jpg";
+import photo6 from "../../img/photo6.jpg";
+import photo7 from "../../img/photo7.jpg";
+import photo8 from "../../img/photo8.jpg";
+import photo9 from "../../img/photo9.jpg";
+import photo10 from "../../img/photo10.jpg";
+import photo11 from "../../img/photo11.jpg";
+import photo12 from "../../img/photo12.jpg";
+
 
 const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [likedProducts, setLikedProducts] = useState({});
 
-  // Section animation with float
+  // Section animation
   const sectionHeaderVariants = {
     hidden: { opacity: 0, y: -40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
   };
 
-  // Container stagger for cards
+  // Container stagger
   const containerVariants = {
     hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
+    visible: { transition: { staggerChildren: 0.15 } },
   };
 
-  // Card animations with float
+  // Card animations
   const cardVariants = {
     hidden: { opacity: 0, y: 60, scale: 0.9 },
     visible: {
@@ -36,9 +42,9 @@ const Products = () => {
       transition: { type: "spring", stiffness: 100, damping: 15 },
     },
     hover: {
-      scale: 1.08,
-      y: -10,
-      boxShadow: "0px 25px 60px rgba(0,0,0,0.2)",
+      scale: 1.05,
+      y: -8,
+      boxShadow: "0px 18px 45px rgba(0,0,0,0.2)",
       transition: { type: "spring", stiffness: 200, damping: 15 },
     },
   };
@@ -50,20 +56,20 @@ const Products = () => {
     exit: { opacity: 0, scale: 0.9, transition: { duration: 0.3 } },
   };
 
-  // Updated product list with Indian Rupee sign and reduced prices
+  // Products
   const products = [
-    { name: "Luxury Hair Wax", desc: "Strong hold with natural shine.", price: "₹250", rating: 5, id: 1, img: "https://images.pexels.com/photos/3992877/pexels-photo-3992877.jpeg", details: "Non-greasy matte finish, all-day hold, made with beeswax and nourishing oils." },
-    { name: "Beard Grooming Kit", desc: "Complete beard care essentials.", price: "₹400", rating: 4, id: 2, img: "https://images.pexels.com/photos/3998425/pexels-photo-3998425.jpeg", details: "Includes beard oil, balm, boar bristle brush, wooden comb & travel pouch." },
-    { name: "Facial Cleanser", desc: "Gentle deep cleaning.", price: "₹300", rating: 4, id: 3, img: "https://images.pexels.com/photos/3735641/pexels-photo-3735641.jpeg", details: "Charcoal + tea tree oil formula, removes impurities, suitable for all skin types." },
-    { name: "Hair Dryer Pro", desc: "Salon-grade fast drying.", price: "₹800", rating: 5, id: 4, img: "https://images.pexels.com/photos/3993447/pexels-photo-3993447.jpeg", details: "Lightweight, ionic tech for shine, multiple heat/speed settings, quiet motor." },
-    { name: "Premium Razor", desc: "Smooth, irritation-free shave.", price: "₹350", rating: 4, id: 5, img: "https://images.pexels.com/photos/3992874/pexels-photo-3992874.jpeg", details: "Ergonomic handle, precision blades, lubricating strip, compatible cartridges." },
-    { name: "Skincare Set", desc: "Complete men’s skincare bundle.", price: "₹900", rating: 5, id: 6, img: "https://images.pexels.com/photos/3735613/pexels-photo-3735613.jpeg", details: "Includes cleanser, toner, moisturizer, anti-aging serum for healthy skin." },
-    { name: "Grooming Scissors", desc: "Sharp & ergonomic design.", price: "₹220", rating: 4, id: 7, img: "https://images.pexels.com/photos/6621243/pexels-photo-6621243.jpeg", details: "Stainless steel precision scissors, ergonomic grip, travel case included." },
-    { name: "Luxury Perfume", desc: "Bold, long-lasting fragrance.", price: "₹1100", rating: 5, id: 8, img: "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg", details: "Notes of sandalwood, musk, bergamot, presented in elegant glass bottle." },
-    { name: "Aftershave Balm", desc: "Soothes & refreshes.", price: "₹280", rating: 4, id: 9, img: "https://images.pexels.com/photos/3735636/pexels-photo-3735636.jpeg", details: "Aloe vera & chamomile infused, reduces irritation, hydrates skin." },
-    { name: "Luxury Shampoo", desc: "Strengthens & nourishes.", price: "₹320", rating: 5, id: 10, img: "https://images.pexels.com/photos/3735630/pexels-photo-3735630.jpeg", details: "Keratin enriched formula, adds shine & volume, sulfate-free." },
-    { name: "Electric Trimmer", desc: "Precision trimming tool.", price: "₹600", rating: 5, id: 11, img: "https://images.pexels.com/photos/3992872/pexels-photo-3992872.jpeg", details: "Cordless design, multiple guards, fast charge, ergonomic grip." },
-    { name: "Face Mask Pack", desc: "Rejuvenating skincare masks.", price: "₹250", rating: 4, id: 12, img: "https://images.pexels.com/photos/3735614/pexels-photo-3735614.jpeg", details: "Hydrating, brightening, and detox masks for weekly skin care." },
+    { id: 1, name: "Luxury Hair Wax", desc: "Strong hold with natural shine.", price: "₹250", rating: 5, img: photo1, details: "Non-greasy matte finish, all-day hold, made with beeswax and nourishing oils." },
+    { id: 2, name: "Beard Grooming Kit", desc: "Complete beard care essentials.", price: "₹400", rating: 4, img: photo2, details: "Includes beard oil, balm, boar bristle brush, wooden comb & travel pouch." },
+    { id: 3, name: "Facial Cleanser", desc: "Gentle deep cleaning.", price: "₹300", rating: 4, img: photo3, details: "Charcoal + tea tree oil formula, removes impurities, suitable for all skin types." },
+    { id: 4, name: "Hair Dryer Pro", desc: "Salon-grade fast drying.", price: "₹800", rating: 5, img: photo4, details: "Lightweight, ionic tech for shine, multiple heat/speed settings, quiet motor." },
+    { id: 5, name: "Premium Razor", desc: "Smooth, irritation-free shave.", price: "₹350", rating: 4, img: photo5, details: "Ergonomic handle, precision blades, lubricating strip, compatible cartridges." },
+    { id: 6, name: "Skincare Set", desc: "Complete men’s skincare bundle.", price: "₹900", rating: 5, img: photo6, details: "Includes cleanser, toner, moisturizer, anti-aging serum for healthy skin." },
+    { id: 7, name: "Grooming Scissors", desc: "Sharp & ergonomic design.", price: "₹220", rating: 4, img: photo7, details: "Stainless steel precision scissors, ergonomic grip, travel case included." },
+    { id: 8, name: "Luxury Perfume", desc: "Bold, long-lasting fragrance.", price: "₹1100", rating: 5, img: photo8, details: "Notes of sandalwood, musk, bergamot, presented in elegant glass bottle." },
+    { id: 9, name: "Aftershave Balm", desc: "Soothes & refreshes.", price: "₹280", rating: 4, img: photo9, details: "Aloe vera & chamomile infused, reduces irritation, hydrates skin." },
+    { id: 10, name: "Luxury Shampoo", desc: "Strengthens & nourishes.", price: "₹320", rating: 5, img: photo10, details: "Keratin enriched formula, adds shine & volume, sulfate-free." },
+    { id: 11, name: "Electric Trimmer", desc: "Precision trimming tool.", price: "₹600", rating: 5, img: photo11, details: "Cordless design, multiple guards, fast charge, ergonomic grip." },
+    { id: 12, name: "Face Mask Pack", desc: "Rejuvenating skincare masks.", price: "₹250", rating: 4, img: photo12, details: "Hydrating, brightening, and detox masks for weekly skin care." },
   ];
 
   const handleLike = (id) => {
@@ -72,13 +78,24 @@ const Products = () => {
 
   return (
     <div className="font-sans">
-      {/* Parallax Hero (Optimized with CSS) */}
-      <div 
-        className="relative h-[40vh] overflow-hidden flex flex-col justify-center items-center text-center text-white bg-cover bg-center bg-fixed" 
-        style={{ backgroundImage: `url('https://images.pexels.com/photos/3992877/pexels-photo-3992877.jpeg')` }}
-      >
+      {/* Hero Section with Optimized Parallax */}
+      <div className="relative h-[40vh] flex items-center justify-center overflow-hidden text-white">
+        {/* GPU-accelerated parallax image */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${photo0})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          // initial={{ scale: 1.2, y: -50 }}
+          // animate={{ scale: 1, y: 0 }}
+          // transition={{ duration: 1.2, ease: "easeOut" }}
+        />
         <div className="absolute inset-0 bg-black/60" />
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={sectionHeaderVariants} className="relative z-10">
+        <motion.div
+          className="relative z-10 text-center px-6"
+        >
           <h1 className="text-5xl font-extrabold mb-3 tracking-wide drop-shadow-lg">Premium Grooming Products</h1>
           <div className="h-1 w-32 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full mb-4"></div>
           <p className="max-w-2xl mx-auto text-lg opacity-90">
@@ -96,14 +113,17 @@ const Products = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {products.map((product, i) => (
+          {products.map((product) => (
             <motion.div
               key={product.id}
-              className="relative w-full aspect-[3/4] rounded-2xl shadow-2xl cursor-pointer bg-white backdrop-blur-xl border border-gray-200 group card-with-gradient-border"
+              className="relative w-full aspect-[3/4] rounded-2xl shadow-2xl cursor-pointer bg-white border border-gray-200 group card-with-gradient-border"
               variants={cardVariants}
               whileHover="hover"
             >
-              <img src={product.img} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500" />
+              {/* Background Image */}
+              <img src={product.img} alt={product.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+
+              {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent flex flex-col justify-end p-6 text-white z-10">
                 <h3 className="text-2xl font-bold drop-shadow-md">{product.name}</h3>
                 <p className="text-sm opacity-80 mt-2">{product.desc}</p>
@@ -116,6 +136,8 @@ const Products = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Hover Overlay */}
               <motion.div
                 className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-6 text-white z-20"
                 initial={{ opacity: 0 }}
@@ -145,7 +167,7 @@ const Products = () => {
         </motion.div>
       </div>
 
-      {/* Modal */}
+      {/* Product Modal */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div className="fixed inset-0 bg-gray-200/90 backdrop-blur-lg flex items-center justify-center p-4 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -190,12 +212,12 @@ const Products = () => {
         )}
       </AnimatePresence>
 
+      {/* Gradient Border Hover Effect */}
       <style jsx>{`
         .card-with-gradient-border {
           position: relative;
           z-index: 1;
         }
-
         .card-with-gradient-border::after {
           content: "";
           position: absolute;
@@ -206,12 +228,10 @@ const Products = () => {
           transform: scale(0.95);
           transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
-
         .card-with-gradient-border:hover::after {
           opacity: 1;
           transform: scale(1);
         }
-
       `}</style>
     </div>
   );

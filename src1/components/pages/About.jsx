@@ -70,6 +70,8 @@ const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, ove
     })
   };
 
+  
+
   return (
     <motion.div
       ref={ref}
@@ -186,6 +188,8 @@ const HeroAbout = () => {
   );
 };
 
+
+
 // Our Story section with a new theme
 const OurStory = () => {
   const ref = useRef(null);
@@ -291,6 +295,7 @@ const AboutServices = () => {
     </section>
   );
 };
+
 
 // Team member card and section with hover and animation
 const TeamMemberCard = ({ name, role, photoUrl, description }) => {

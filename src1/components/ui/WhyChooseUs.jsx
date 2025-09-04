@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Scissors } from "lucide-react";
+// Important: Make sure this image is optimized for the web (compressed and resized).
 import img from "../../img/hero1.jpeg"
 
 const WhyChooseUs = () => {
@@ -8,13 +9,13 @@ const WhyChooseUs = () => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.3 },
+      transition: { staggerChildren: 0.2 }, // Slightly reduced stagger duration
     },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } },
   };
 
   return (
@@ -42,11 +43,11 @@ const WhyChooseUs = () => {
           animation: slide-border 8s linear infinite;
         }
 
-        /* Gradient border for cards */
+        /* Simplified gradient border for cards - no complex hover effect */
         .gradient-border {
           position: relative;
           border-radius: 1rem;
-          padding: 2px; /* thickness of gradient border */
+          padding: 2px;
           background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
         }
         .gradient-border .card-content {
@@ -115,7 +116,7 @@ const WhyChooseUs = () => {
                 key={i}
                 className="gradient-border"
                 variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }} // Simplified scale animation
               >
                 <div className="card-content p-6 shadow-lg flex items-center gap-4 text-left transition-all hover:shadow-yellow-500/30">
                   <i className={`fa-solid ${card.icon} text-yellow-400 text-3xl`} />
@@ -132,13 +133,12 @@ const WhyChooseUs = () => {
           <motion.div
             className="animated-border-container mx-auto w-full max-w-xs flex items-center justify-center"
             variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }} // Simplified scale animation
           >
             <motion.img
               src={img}
               alt="Allex Gents Parlour"
               className="rounded-2xl shadow-2xl w-full object-cover"
-              whileHover={{ scale: 1.02 }}
             />
           </motion.div>
 
@@ -160,7 +160,7 @@ const WhyChooseUs = () => {
                 key={i}
                 className="gradient-border"
                 variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }} // Simplified scale animation
               >
                 <div className="card-content p-6 shadow-lg flex items-center gap-4 text-right transition-all hover:shadow-yellow-500/30">
                   <div className="flex-1">

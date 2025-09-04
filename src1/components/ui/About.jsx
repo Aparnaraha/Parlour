@@ -1,61 +1,42 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { motion, useMotionValue, useTransform, animate, useInView, useAnimation } from "framer-motion";
+import { motion, animate } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import {
   Scissors, UserRound, Fan, Gem, Heart
 } from 'lucide-react';
 
-const AnimatedCounter = ({ from, to, suffix, sparkleColor }) => {
+const AnimatedCounter = ({ from, to, suffix, isInView }) => {
   const nodeRef = useRef(null);
-  const isInView = useInView(nodeRef, { once: true, amount: 0.8 });
-  const count = useMotionValue(from);
-  const rounded = useTransform(count, (latest) => Math.floor(latest));
-  const sparkleControls = useAnimation();
 
   useEffect(() => {
-    if (isInView) {
-      animate(count, to, {
+    if (isInView && nodeRef.current) {
+      const node = nodeRef.current;
+      animate(from, to, {
         duration: 2.5,
         ease: "easeOut",
-        onComplete: () => {
-          sparkleControls.start({
-            scale: [1, 1.5, 1],
-            opacity: [0, 1, 0],
-            transition: { duration: 0.5, ease: "easeInOut" },
-          });
+        onUpdate: (latest) => {
+          node.textContent = Math.floor(latest);
         },
       });
     }
-  }, [isInView, count, to, sparkleControls]);
+  }, [isInView, from, to]);
 
   return (
     <div className="flex flex-col items-center relative">
-      <motion.div ref={nodeRef} className="text-4xl md:text-5xl font-extrabold flex items-baseline">
-        <motion.span className="text-yellow-500">{rounded}</motion.span>
+      <div className="text-4xl md:text-5xl font-extrabold flex items-baseline">
+        <span ref={nodeRef} className="text-yellow-500">{Math.floor(from)}</span>
         <span className="text-xl md:text-2xl font-normal ml-1 text-white">{suffix}</span>
-      </motion.div>
-      <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full"
-        style={{
-          boxShadow: `0 0 15px 5px ${sparkleColor}`,
-          backgroundColor: sparkleColor,
-        }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={sparkleControls}
-      />
+      </div>
     </div>
   );
 };
 
-// Main About component
 const About = () => {
-  const headingRef = useRef(null);
-  const cardsRef = useRef(null);
-  const metricsRef = useRef(null);
-  const isInViewHeading = useInView(headingRef, { once: true, amount: 0.5 });
-  const isInViewCards = useInView(cardsRef, { once: true, amount: 0.2 });
-  const isInViewMetrics = useInView(metricsRef, { once: true, amount: 0.2 });
+  // Use a single ref for the main container
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
   const featureCards = [
     {
@@ -97,47 +78,48 @@ const About = () => {
   ];
 
   const metrics = [
-    { count: 10000, label: "Clients Served", suffix: "+", sparkleColor: "#FFD700" },
-    { count: 99, label: "Satisfaction Rate", suffix: "%", sparkleColor: "#50E3C2" },
-    { count: 50, label: "Award-Winning Styles", suffix: "+", sparkleColor: "#7ED321" },
-    { count: 15, label: "Years in Business", suffix: "+", sparkleColor: "#F5A623" },
+    { count: 10000, label: "Clients Served", suffix: "+"},
+    { count: 99, label: "Satisfaction Rate", suffix: "%"},
+    { count: 50, label: "Award-Winning Styles", suffix: "+"},
+    { count: 15, label: "Years in Business", suffix: "+"},
   ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2, // Stagger children animations
+        when: "beforeChildren",
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100, damping: 12 },
+    },
+  };
 
   const underlineVariants = {
     hidden: { scaleX: 0 },
     visible: { scaleX: 1, transition: { duration: 1, delay: 0.5, ease: "easeOut" } }
   };
 
-  const textVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-  
-  const titleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        staggerChildren: 0.1,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <section className="bg-white min-h-screen flex flex-col items-center py-16 px-6 lg:px-12 font-sans overflow-hidden">
+    <section 
+      ref={containerRef}
+      className="bg-white min-h-screen flex flex-col items-center py-16 px-6 lg:px-12 font-sans overflow-hidden"
+    >
       {/* Heading Section with Animations */}
       <motion.div
-        ref={headingRef}
         className="text-center max-w-4xl mx-auto"
         initial="hidden"
-        animate={isInViewHeading ? "visible" : "hidden"}
-        variants={titleVariants}
+        animate={isInView ? "visible" : "hidden"}
+        variants={containerVariants}
       >
         <motion.div variants={itemVariants} className="inline-flex items-center px-4 py-2 mb-5 border border-gray-300 rounded-full text-[#333] font-semibold text-sm">
           <Scissors className="w-4 h-4 mr-2 text-yellow-500" /> About Allex
@@ -152,7 +134,7 @@ const About = () => {
           variants={underlineVariants}
         />
         <motion.p
-          variants={textVariants}
+          variants={itemVariants}
           className="text-gray-600 text-lg leading-relaxed max-w-3xl mx-auto"
         >
           At <span className="font-semibold text-blue-600">Allex Gentleman’s Parlour</span>,
@@ -163,42 +145,24 @@ const About = () => {
         </motion.p>
       </motion.div>
 
-      <hr className="my-16 w-full max-w-6xl border-t border-gray-200" />
+      <hr className="my-16 w-full max-w-xl border-t border-gray-300" />
 
-      {/* Feature Cards with Animations */}
       <motion.div
-        ref={cardsRef}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl w-full"
         initial="hidden"
-        animate={isInViewCards ? "visible" : "hidden"}
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.2,
-            },
-          },
-        }}
+        animate={isInView ? "visible" : "hidden"}
+        variants={containerVariants}
       >
         {featureCards.map((card, index) => (
           <motion.div
             key={index}
-            variants={{
-              hidden: { opacity: 0, y: 50, scale: 0.95, rotateX: -20 },
-              visible: {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                rotateX: 0,
-                transition: { type: "spring", stiffness: 100, damping: 12 },
-              },
-            }}
+            variants={itemVariants}
             whileHover={{ y: -10, boxShadow: `0px 20px 50px ${card.boxShadowColor}`, scaleX: 1.1 }}
             className={`relative bg-white rounded-xl ${card.defaultShadow} p-6 text-center flex flex-col items-center justify-center group border border-transparent ${card.hoverColor} transition-all duration-300`}
           >
             {card.icon}
             <h3 className="text-lg font-bold text-[#333] mb-2">{card.title}</h3>
             <p className="text-gray-600 text-sm" dangerouslySetInnerHTML={{ __html: card.description }}></p>
-            {/* Animated border on hover */}
             <motion.div
               className={`absolute inset-0 rounded-xl pointer-events-none ${card.lineGradient}`}
               initial={{ scale: 0 }}
@@ -209,17 +173,24 @@ const About = () => {
         ))}
       </motion.div>
 
-      <hr className="my-16 w-full max-w-6xl border-t border-gray-200" />
+      <hr className="my-16 w-full max-w-6xl border-t border-gray-300" />
 
-      {/* Counter Section with Animations */}
       <motion.div
-        ref={metricsRef}
         className="relative bg-[#1e4598] text-white rounded-xl shadow-2xl p-10 w-full max-w-6xl text-center overflow-hidden"
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
-        animate={isInViewMetrics ? { opacity: 1, y: 0, scale: 1 } : {}}
-        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        variants={containerVariants}
       >
-        <div className="absolute inset-0 rounded-xl border-4 border-yellow-400 animate-pulse-border"></div>
+        <motion.div
+          className="absolute inset-0 rounded-xl border-4 border-yellow-400"
+          initial={{ opacity: 0.2, scale: 1 }}
+          animate={
+            isInView ?
+            { opacity: [0.2, 0.9, 0.2], scale: [1, 1.05, 1], boxShadow: '0 0 40px 10px rgba(255, 215, 0, 0.9)' } :
+            {}
+          }
+          transition={{ duration: 1.5, type: 'easeInOut', repeat: 0 }}
+        />
         <div className="relative z-10">
           <h2 className="text-2xl font-bold mb-2">Our Impact in the Grooming Industry</h2>
           <div className="h-1 w-20 mx-auto bg-gradient-to-r from-white via-[#FFD700] to-white rounded-full mb-5"></div>
@@ -227,17 +198,13 @@ const About = () => {
             {metrics.map((metric, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInViewMetrics ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.2 + 0.3, duration: 0.7 }}
+                variants={itemVariants}
                 className="flex flex-col items-center"
               >
-                <AnimatedCounter from={0} to={metric.count} suffix={metric.suffix} sparkleColor={metric.sparkleColor} />
+                <AnimatedCounter from={0} to={metric.count} suffix={metric.suffix} isInView={isInView} />
                 <motion.span
                   className="text-sm md:text-base font-medium opacity-80 mt-2"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInViewMetrics ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: index * 0.2 + 0.5, duration: 0.7 }}
+                  variants={itemVariants}
                 >
                   {metric.label}
                 </motion.span>
@@ -246,16 +213,6 @@ const About = () => {
           </div>
         </div>
       </motion.div>
-      <style jsx="true">{`
-        @keyframes pulse-border {
-          0% { transform: scale(1); opacity: 0.2; box-shadow: 0 0 5px 2px rgba(255, 215, 0, 0.4); }
-          50% { transform: scale(1.05); opacity: 0.9; box-shadow: 0 0 40px 10px rgba(255, 215, 0, 0.9); }
-          100% { transform: scale(1); opacity: 0.2; box-shadow: 0 0 5px 2px rgba(255, 215, 0, 0.4); }
-        }
-        .animate-pulse-border {
-          animation: pulse-border 4s infinite;
-        }
-      `}</style>
     </section>
   );
 };

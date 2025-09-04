@@ -2,90 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Phone, Star, MessageCircle, CheckCircle, Brush, Palette, Shield, ChevronDown, Camera, User, Sun, Briefcase, Heart, Camera as CameraIcon, Scissors, Zap, Award, Smile } from 'lucide-react';
 
-// A reusable component for the JS-based particle effect
-const ParticleEffect = () => {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    const particleCount = 50;
-
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-
-    class Particle {
-      constructor(x, y, size, speedX, speedY, color) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.speedX = speedX;
-        this.speedY = speedY;
-        this.color = color;
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.size > 0.2) this.size -= 0.1;
-      }
-
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    const initParticles = () => {
-      particles = [];
-      for (let i = 0; i < particleCount; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const size = Math.random() * 5 + 1;
-        const speedX = Math.random() * 0.5 - 0.25;
-        const speedY = Math.random() * 0.5 - 0.25;
-        const color = `rgba(255, 215, 0, ${Math.random() * 0.5 + 0.2})`;
-        particles.push(new Particle(x, y, size, speedX, speedY, color));
-      }
-    };
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-
-        // Respawn particles that have shrunk or gone off-screen
-        if (particles[i].size <= 0.2 || particles[i].x < 0 || particles[i].x > canvas.width || particles[i].y < 0 || particles[i].y > canvas.height) {
-          particles[i] = new Particle(
-            Math.random() * canvas.width,
-            Math.random() * canvas.height,
-            Math.random() * 5 + 1,
-            Math.random() * 0.5 - 0.25,
-            Math.random() * 0.5 - 0.25,
-            `rgba(255, 215, 0, ${Math.random() * 0.5 + 0.2})`
-          );
-        }
-      }
-      requestAnimationFrame(animate);
-    };
-
-    resizeCanvas();
-    initParticles();
-    animate();
-
-    window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0 pointer-events-none" />;
-};
-
+ 
 
 // --- Modal Components ---
 
@@ -195,11 +112,11 @@ const MakeupServiceHero = () => {
           content: ''; position: absolute; animation: continuous-border-move 10s linear infinite;
         }
       `}</style>
-      <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#21242c] font-inter text-white">
+      <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#1a1c24] font-inter text-white">
         <motion.div
           className="w-full max-w-7xl flex flex-col lg:flex-row rounded-3xl"
           variants={containerVariants}
-          initial="hidden"
+        //   initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.5 }}
         >
@@ -256,7 +173,7 @@ const MakeupServiceHero = () => {
   );
 };
 
-// --- Section 2: Signature Packages with Particle Animation ---
+
 const SignaturePackages = () => {
     const packages = [
         {
@@ -356,8 +273,10 @@ const SignaturePackages = () => {
 
     return (
         <section className="relative py-20 px-6 overflow-hidden text-black bg-[#fafafa]">
-            <ParticleEffect />
             <div className="relative z-10 max-w-7xl mx-auto text-center mb-16">
+                        <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Our Packages
+                </span>
                 <motion.h2
                     className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent"
                     initial={{ opacity: 0, y: -20 }}
@@ -455,6 +374,9 @@ const WhyChooseUs = () => {
     return (
         <section className="text-white py-20 px-6 bg-gradient-to-b from-[#1a1c24] to-[#0f1116]">
             <div className="max-w-7xl mx-auto text-center mb-16">
+                        <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Why Us?
+                </span>
                 <motion.h2
                     className="text-5xl font-extrabold mb-6"
                     initial={{ opacity: 0, y: -20 }}
@@ -542,7 +464,6 @@ const PhotoGallery = () => {
 
     return (
         <section className="bg-white text-black py-20 px-6 overflow-hidden relative">
-            <ParticleEffect />
             <div className="max-w-7xl mx-auto text-center mb-16 relative z-10">
                 <motion.h2
                     className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent"

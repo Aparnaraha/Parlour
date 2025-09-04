@@ -48,7 +48,7 @@ const Enquiry = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+            <span className="inline-block px-4 py-1 mb-10 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
               Contact Us
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">

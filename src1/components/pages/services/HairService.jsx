@@ -2,96 +2,6 @@
     import { motion, useScroll, useTransform, useInView } from 'framer-motion';
     import { Sparkles, Scissors, Phone, Star, MessageCircle, Crown, Droplet, User, Award, Check, Search } from 'lucide-react';
 
-    // Reusable particle effect component for a dynamic background
-    const ParticleEffect = ({ color1, color2 }) => {
-        const canvasRef = useRef(null);
-
-        useEffect(() => {
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            const particleCount = 50;
-            let animationFrameId;
-
-            const resizeCanvas = () => {
-                canvas.width = window.innerWidth;
-                canvas.height = document.documentElement.scrollHeight;
-            };
-
-            class Particle {
-                constructor(x, y, size, speedX, speedY, color) {
-                    this.x = x;
-                    this.y = y;
-                    this.size = size;
-                    this.speedX = speedX;
-                    this.speedY = speedY;
-                    this.color = color;
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    if (this.size > 0.2) this.size -= 0.05;
-                }
-
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            const initParticles = () => {
-                particles = [];
-                for (let i = 0; i < particleCount; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const size = Math.random() * 3 + 1;
-                    const speedX = Math.random() * 0.5 - 0.25;
-                    const speedY = Math.random() * 0.5 - 0.25;
-                    const color = `rgba(${parseInt(color1.slice(1, 3), 16)}, ${parseInt(color1.slice(3, 5), 16)}, ${parseInt(color1.slice(5, 7), 16)}, ${Math.random() * 0.5 + 0.2})`;
-                    particles.push(new Particle(x, y, size, speedX, speedY, color));
-                }
-            };
-
-            const animate = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-
-                    if (particles[i].size <= 0.2 || particles[i].x < 0 || particles[i].x > canvas.width || particles[i].y < 0 || particles[i].y > canvas.height) {
-                        particles[i] = new Particle(
-                            Math.random() * canvas.width,
-                            Math.random() * canvas.height,
-                            Math.random() * 3 + 1,
-                            Math.random() * 0.5 - 0.25,
-                            Math.random() * 0.5 - 0.25,
-                            `rgba(${parseInt(color2.slice(1, 3), 16)}, ${parseInt(color2.slice(3, 5), 16)}, ${parseInt(color2.slice(5, 7), 16)}, ${Math.random() * 0.5 + 0.2})`
-                        );
-                    }
-                }
-                animationFrameId = requestAnimationFrame(animate);
-            };
-
-            resizeCanvas();
-            initParticles();
-            animate();
-
-            window.addEventListener('resize', resizeCanvas);
-            return () => {
-                window.removeEventListener('resize', resizeCanvas);
-                cancelAnimationFrame(animationFrameId);
-            };
-        }, [color1, color2]);
-
-        return <canvas ref={canvasRef} className="fixed inset-0 w-full h-full z-0 pointer-events-none" />;
-    };
-
-
     // --- Section 1: Hair Service Hero ---
     const containerVariants = {
     hidden: { opacity: 0, y: 40 },
@@ -108,6 +18,8 @@
     };
 
     const HairServiceHero = () => {
+          const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+          const [showCallModal, setShowCallModal] = useState(false);
     return (
         <>
         {/* Border Animation Styles */}
@@ -137,11 +49,11 @@
         `}</style>
 
         {/* Hero Section */}
-        <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#21242c] font-inter text-white">
+        <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#1a1c24] font-inter text-white">
             <motion.div
             className="w-full max-w-7xl flex flex-col lg:flex-row rounded-3xl"
             variants={containerVariants}
-            initial="hidden"
+            // initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.5 }}
             >
@@ -210,36 +122,13 @@
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-                <motion.button
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all"
-                    style={{
-                    background:
-                        "linear-gradient(90deg, #FF9800 0%, #FFD700 100%)",
-                    }}
-                    whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <MessageCircle size={20} className="mr-2" /> Book Appointment
-                </motion.button>
-
-                <motion.button
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all border border-gray-700"
-                    style={{
-                    background:
-                        "linear-gradient(90deg, #3498db 0%, #2c3e50 100%)",
-                    }}
-                    whileHover={{
-                    background:
-                        "linear-gradient(90deg, #2c3e50 0%, #3498db 100%)",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <Phone size={20} className="mr-2" /> Call Us
-                </motion.button>
-                </div>
+                              <motion.button onClick={() => setShowEnquiryModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all" style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }} whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 215, 0, 0.4)' }} whileTap={{ scale: 0.95 }}>
+                                <MessageCircle size={20} className="mr-2" /> Enquiry
+                              </motion.button>
+                              <motion.button onClick={() => setShowCallModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all border border-gray-700" style={{ background: 'linear-gradient(90deg, #3498db 0%, #2c3e50 100%)' }} whileHover={{ background: 'linear-gradient(90deg, #2c3e50 0%, #3498db 100%)' }} whileTap={{ scale: 0.95 }}>
+                                <Phone size={20} className="mr-2" /> Call Now
+                              </motion.button>
+                            </div>
             </div>
 
             {/* Right Image */}
@@ -269,6 +158,8 @@
             </motion.div>
             </motion.div>
         </section>
+        <EnquiryModal show={showEnquiryModal} onClose={() => setShowEnquiryModal(false)} />
+      <CallModal show={showCallModal} onClose={() => setShowCallModal(false)} />
         </>
     );
     };
@@ -372,6 +263,176 @@
         );
     };
 
+    // --- Modal Components ---
+    
+    const EnquiryModal = ({ show, onClose }) => {
+        if (!show) return null;
+    
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+                <div className="bg-[#21242c] text-white rounded-xl p-8 max-w-lg w-full relative border border-gray-700 shadow-2xl">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                    <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">Enquire Now</h2>
+                    <p className="text-gray-400 mb-6">Fill out the form below and we'll get back to you shortly.</p>
+                    <form className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-gray-300 font-medium mb-1">Name</label>
+                            <input type="text" id="name" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="block text-gray-300 font-medium mb-1">Email</label>
+                            <input type="email" id="email" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="phone" className="block text-gray-300 font-medium mb-1">Phone</label>
+                            <input type="tel" id="phone" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="message" className="block text-gray-300 font-medium mb-1">Message</label>
+                            <textarea id="message" rows="4" className="w-full bg-zinc-800 border border-gray-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full px-8 py-3 rounded-xl font-semibold text-lg transition-all"
+                            style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }}
+                        >
+                            Send Enquiry
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    };
+    
+    const CallModal = ({ show, onClose }) => {
+        if (!show) return null;
+    
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+                <div className="bg-[#21242c] text-white rounded-xl p-8 max-w-sm w-full relative border border-gray-700 shadow-2xl text-center">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                    <Phone size={48} className="text-yellow-400 mb-4 mx-auto" />
+                    <h2 className="text-2xl font-bold mb-2">Call Now</h2>
+                    <p className="text-gray-400 mb-4">You can reach us at:</p>
+                    <a href="tel:+1234567890" className="text-3xl font-bold text-yellow-400 hover:underline">+1 (234) 567-890</a>
+                    <p className="text-sm text-gray-500 mt-2">Tap the number to call directly.</p>
+                </div>
+            </div>
+        );
+    };
+    
+    // --- Section 1: Makeup Service (Hero Section) ---
+    const MakeupServiceHero = () => {
+      const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+      const [showCallModal, setShowCallModal] = useState(false);
+    
+      const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+          opacity: 1,
+          transition: {
+            staggerChildren: 0.2,
+          },
+        },
+      };
+    
+      const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0 },
+      };
+    
+      return (
+        <>
+          <style>{`
+            @keyframes continuous-border-move {
+              0%, 100% { top: 0; left: 0; width: 80px; height: 4px; background: linear-gradient(90deg, transparent, #FFD700); transform: none; }
+              25% { top: 0; left: calc(100% - 80px); width: 80px; height: 4px; background: linear-gradient(90deg, transparent, #FFD700); transform: none; }
+              25.1% { top: 0; left: calc(100% - 4px); width: 4px; height: 80px; background: linear-gradient(180deg, transparent, #FFD700); transform-origin: top center; }
+              50% { top: calc(100% - 80px); left: calc(100% - 4px); width: 4px; height: 80px; background: linear-gradient(180deg, transparent, #FFD700); transform-origin: top center; }
+              50.1% { top: calc(100% - 4px); left: calc(100% - 80px); width: 80px; height: 4px; background: linear-gradient(90deg, transparent, #FFD700); transform-origin: right center; }
+              75% { top: calc(100% - 4px); left: 0; width: 80px; height: 4px; background: linear-gradient(90deg, transparent, #FFD700); transform-origin: right center; }
+              75.1% { top: calc(100% - 80px); left: 0; width: 4px; height: 80px; background: linear-gradient(180deg, transparent, #FFD700); transform-origin: bottom center; }
+              100% { top: 0; left: 0; width: 4px; height: 80px; background: linear-gradient(180deg, transparent, #FFD700); transform-origin: bottom center; }
+            }
+            .animated-border-container-image {
+              position: relative; overflow: hidden; border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1); padding: 3px;
+            }
+            .animated-border-container-image::after {
+              content: ''; position: absolute; animation: continuous-border-move 10s linear infinite;
+            }
+          `}</style>
+          <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#21242c] font-inter text-white">
+            <motion.div
+              className="w-full max-w-7xl flex flex-col lg:flex-row rounded-3xl"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.5 }}
+            >
+              <div className="flex-1 p-6 sm:p-12 flex flex-col justify-center text-center lg:text-left">
+                <motion.div className="inline-flex items-center justify-center lg:justify-start bg-zinc-800 text-gray-400 px-4 py-2 rounded-full text-sm font-medium mb-5 mx-auto lg:mx-0" variants={itemVariants}>
+                  <Sparkles size={16} className="mr-2 text-yellow-500" />
+                  Professional Makeup
+                </motion.div>
+                <motion.h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4" variants={itemVariants}>
+                  Elevate Your <br className="hidden lg:inline" />
+                  <span style={{ background: 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Look</span>
+                </motion.h1>
+                <motion.p className="text-gray-400 text-base sm:text-lg mb-8" variants={itemVariants}>
+                  Our professional makeup artists offer personalized application, from natural everyday looks to stunning, camera-ready transformations for any occasion.
+                </motion.p>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-10 sm:gap-16 mb-8">
+                  <motion.div className="text-center" variants={itemVariants} whileHover={{ scale: 1.1 }}>
+                    <h2 className="text-3xl font-bold text-white">20+</h2>
+                    <span className="text-sm text-gray-500">Years Experience</span>
+                  </motion.div>
+                  <motion.div className="text-center" variants={itemVariants} whileHover={{ scale: 1.1 }}>
+                    <h2 className="text-3xl font-bold text-white">100%</h2>
+                    <span className="text-sm text-gray-500">Client Satisfaction</span>
+                  </motion.div>
+                  <motion.div className="text-center" variants={itemVariants} whileHover={{ scale: 1.1 }}>
+                    <h2 className="text-3xl font-bold text-white">1000+</h2>
+                    <span className="text-sm text-gray-500">Happy Clients</span>
+                  </motion.div>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                  <motion.button onClick={() => setShowEnquiryModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all" style={{ background: 'linear-gradient(90deg, #FF9800 0%, #FFD700 100%)' }} whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 215, 0, 0.4)' }} whileTap={{ scale: 0.95 }}>
+                    <MessageCircle size={20} className="mr-2" /> Enquiry
+                  </motion.button>
+                  <motion.button onClick={() => setShowCallModal(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all border border-gray-700" style={{ background: 'linear-gradient(90deg, #3498db 0%, #2c3e50 100%)' }} whileHover={{ background: 'linear-gradient(90deg, #2c3e50 0%, #3498db 100%)' }} whileTap={{ scale: 0.95 }}>
+                    <Phone size={20} className="mr-2" /> Call Now
+                  </motion.button>
+                </div>
+              </div>
+              <motion.div className="flex-1 flex justify-center p-6 sm:p-12 flex-grow relative max-w-xl w-full" variants={itemVariants}>
+                <div className="relative w-full h-[450px] animated-border-container-image">
+                  <img src="https://ua.cosmohit.ua/uploadfiles/fckeditor/muzhskoy-makiyazh-1.jpg" alt="A professional makeup artist applying makeup to a client" className="w-full h-full rounded-3xl shadow-2xl block object-cover" />
+                  <div className="absolute bottom-6 left-6 bg-gray-900/80 backdrop-blur-sm text-white p-4 rounded-lg text-sm font-medium flex items-center">
+                    <Star size={20} className="mr-2 text-yellow-400" fill="currentColor" />
+                    <div>4.9/5 <br /> Client Rating</div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </section>
+    
+          <EnquiryModal show={showEnquiryModal} onClose={() => setShowEnquiryModal(false)} />
+          <CallModal show={showCallModal} onClose={() => setShowCallModal(false)} />
+        </>
+      );
+    };
+    
+
 
     // --- Section 2: Signature Packages with Filters ---
     const SignaturePackages = () => {
@@ -408,6 +469,9 @@
             <section className="relative py-20 px-6 overflow-hidden bg-white font-inter">
                 <div className="relative z-10 max-w-7xl mx-auto">
                     <div className="text-center mb-16">
+                        <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Our Packages
+                </span>
                         <motion.h2
                             className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent"
                             initial={{ opacity: 0, y: -20 }}
@@ -562,7 +626,10 @@
 
         return (
             <section className="relative py-20 bg-gradient-to-b from-[#1a1c24] to-[#0f1116] text-white">
-                <div className="max-w-7xl mx-auto px-6">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Why us?
+                </span>
                     <motion.h2
                         className="text-5xl font-extrabold mb-6 text-center"
                         initial={{ opacity: 0, y: -30 }}
@@ -625,8 +692,10 @@
 
         return (
             <section className="bg-white text-black py-20 px-6 overflow-hidden relative">
-                <ParticleEffect color1="#FFD700" color2="#3498db" />
-                <div className="max-w-7xl mx-auto text-center mb-16 relative z-10">
+                <div className="max-w-7xl mx-auto text-center mb-16 relative z-10 text-center">
+                    <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Photos Bunch
+                </span>
                     <motion.h2
                         className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent"
                         initial={{ opacity: 0, y: -20 }}

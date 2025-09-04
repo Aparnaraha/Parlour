@@ -189,11 +189,11 @@ const SkinServiceHero = () => {
         }
       `}</style>
 
-      <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#1d212a] font-inter text-white">
+      <section className="relative w-full flex items-center justify-center py-16 md:py-24 bg-[#1a1c24] font-inter text-white">
         <motion.div
           className="w-full max-w-7xl flex flex-col lg:flex-row rounded-3xl"
           variants={containerVariants}
-          initial="hidden"
+          // initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.5 }}
         >

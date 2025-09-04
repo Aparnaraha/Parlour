@@ -1,120 +1,107 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView, useScroll, useTransform, useAnimation } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Heart, Eye, Play, Film, GalleryHorizontal, Award, Trophy, Users, Star,
     Car, Zap, Gem, Shield, Crown, Sun, Moon, ArrowUp, X
 } from 'lucide-react';
-import ThemeChanger from '../ui/ThemeChanger';
 import StillQuestionsSection from '../ui/StillHaveQuestion';
-import Gallerywhy from '../ui/Gallerywhy';
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
 import Testimonials from '../ui/Testimonial'
+import Gallerywhy from '../ui/Gallerywhy'
 
-// --- New Animated Slider Component ---
+// Using a single file structure, the components are defined here.
+const ThemeChanger = ({ theme, toggleTheme }) => {
+    const isDark = theme === 'dark';
+    return (
+        <button
+            onClick={toggleTheme}
+            className={`fixed bottom-8 left-8 p-3 rounded-full shadow-lg z-50 transition-colors duration-300 ${
+                isDark ? 'bg-gray-800 text-yellow-500' : 'bg-white text-gray-900'
+            }`}
+        >
+            {isDark ? <Sun size={24} /> : <Moon size={24} />}
+        </button>
+    );
+};
+
+
+// --- Refactored Animated Slider Component ---
 const AutoAnimatedSlider = ({ videos, theme, onVideoClick }) => {
-    const gradientClass = theme === 'dark' ? 'from-yellow-500 to-orange-500' : 'from-yellow-400 to-orange-400';
+    const sliderRef = useRef(null);
 
-    const cardVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { type: "spring", stiffness: 100, damping: 10 },
-        },
-    };
+    useEffect(() => {
+        const slider = sliderRef.current;
+        if (!slider) return;
+
+        let animationFrameId;
+        const speed = 0.5;
+        let lastTimestamp = 0;
+
+        const animate = (timestamp) => {
+            if (lastTimestamp === 0) lastTimestamp = timestamp;
+            const deltaTime = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+
+            const scrollAmount = speed * deltaTime / 1000 * 60;
+            slider.scrollLeft += scrollAmount;
+
+            if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth) {
+                slider.scrollLeft = 0;
+            }
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationFrameId);
+    }, []);
+
+    const sliderColors = theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-white text-gray-900';
 
     return (
-        <div className={`py-16 px-4 md:px-8 relative overflow-hidden ${theme === 'dark' ? 'bg-gray-950' : 'bg-white'}`}>
-            <style jsx>{`
-                .gradient-ring {
-                    position: relative;
-                    overflow: hidden;
-                    border-radius: 1.5rem; /* rounded-3xl */
-                }
-                .gradient-ring::before {
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    border-radius: inherit;
-                    padding: 1px;
-                    background: linear-gradient(90deg, #facc15, #fb923c);
-                    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-                    -webkit-mask-composite: xor;
-                    mask-composite: exclude;
-                    pointer-events: none;
-                }
-            `}</style>
-            <div className={`max-w-7xl mx-auto relative p-6 md:p-10 rounded-3xl shadow-2xl transition-all duration-500 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-                <motion.h2
-                    className={`text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r ${gradientClass}`}
-                    initial={{ opacity: 0, y: -20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.6 }}
-                >
-                    Quick Reels
-                </motion.h2>
-                <motion.p
-                    className={`text-lg mb-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                    A collection of our favorite short-form videos.
-                </motion.p>
-                <Swiper
-                    modules={[Autoplay]}
-                    spaceBetween={16}
-                    slidesPerView={1.1}
-                    breakpoints={{
-                        640: { slidesPerView: 1.6 },
-                        768: { slidesPerView: 2.3 },
-                        1024: { slidesPerView: 3.1 },
-                    }}
-                    loop
-                    autoplay={{ delay: 0, disableOnInteraction: false }}
-                    speed={3800}
-                    className="pb-6"
+        <div className={`py-16 px-4 md:px-8 relative overflow-hidden ${sliderColors}`}>
+            <div className={`text-center max-w-7xl mx-auto relative p-6 md:p-10 rounded-3xl transition-all duration-500`}>
+                <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
+                    Our Reels
+                </span>
+                <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Reels Showcase</h2>
+                <p className={`text-lg mb-12 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Watch our Reels and process and see results you will get.
+                </p>
+                <div
+                    ref={sliderRef}
+                    className="flex overflow-x-hidden space-x-6 md:space-x-8 pb-6"
                 >
                     {videos.map((video, index) => {
                         const videoId = video.split('/').pop();
+                        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&modestbranding=1`;
                         return (
-                            <SwiperSlide key={index}>
-                                <motion.div
-                                    className="gradient-ring rounded-xl h-[560px] w-80 mx-auto cursor-pointer
-                                               transition-all duration-400 ease-out
-                                               hover:-translate-y-2 hover:shadow-lg hover:shadow-yellow-500/15"
-                                    variants={cardVariants}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, amount: 0.25 }}
-                                    onClick={() => onVideoClick(video)}
-                                >
-                                    <iframe
-                                        className="w-full h-full rounded-2xl"
-                                        src={`${video}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
-                                        title={`YouTube video ${index + 1}`}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        referrerPolicy="strict-origin-when-cross-origin"
-                                        allowFullScreen
-                                    ></iframe>
-                                </motion.div>
-                            </SwiperSlide>
+                            <div
+                                key={index}
+                                className="relative h-[560px] w-80 flex-shrink-0 cursor-pointer rounded-2xl p-[3px]
+                                           bg-gradient-to-r from-yellow-400 to-orange-500
+                                           transition-all duration-400 ease-out"
+                                onClick={() => onVideoClick(video)}
+                            >
+                                <div className="absolute inset-0 bg-gray-950 rounded-[calc(0.75rem-3px)]"></div>
+                                <iframe
+                                    className="w-full h-full rounded-2xl relative z-10"
+                                    src={embedUrl}
+                                    title={`YouTube video ${index + 1}`}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
                         );
                     })}
-                </Swiper>
+                </div>
             </div>
         </div>
     );
 };
 
-// --- New Our Story Component ---
+// --- Our Story Component ---
 const OurStory = ({ theme }) => {
     const storyPoints = [
         { year: 2010, title: "Founded with a Vision", desc: "Our journey began with a single chair and a commitment to excellence.", icon: Crown },
@@ -124,15 +111,8 @@ const OurStory = ({ theme }) => {
         { year: 2025, title: "Global Recognition", desc: "Featured in leading magazines, we are now a destination for beauty.", icon: Trophy },
     ];
 
-    const controls = useAnimation();
     const timelineRef = useRef(null);
-    const inView = useInView(timelineRef, { once: true, amount: 0.5 });
-
-    useEffect(() => {
-        if (inView) {
-            controls.start("visible");
-        }
-    }, [controls, inView]);
+    const isInView = false;
     
     const gradientClass = theme === 'dark' ? 'from-yellow-500 to-orange-500' : 'from-yellow-400 to-orange-400';
 
@@ -161,19 +141,15 @@ const OurStory = ({ theme }) => {
                 </span>
                 <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Our Story</h2>
                 <p className={`text-lg mb-12 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>A journey of passion, creativity, and dedication.</p>
-                <motion.div
+                <div
                     ref={timelineRef}
                     className="relative flex flex-col items-center"
-                    variants={storyContainerVariants}
-                    initial="hidden"
-                    animate={controls}
                 >
                     <div className="absolute left-1/2 -ml-0.5 w-1 h-full bg-gradient-to-b from-yellow-500 via-orange-500 to-transparent z-0"></div>
                     {storyPoints.map((point, index) => (
-                        <motion.div
+                        <div
                             key={index}
                             className={`flex flex-col md:flex-row items-center w-full my-8 relative z-10`}
-                            variants={storyItemVariants}
                         >
                             <div className={`md:w-1/2 md:pr-12 text-center md:text-right ${index % 2 !== 0 ? 'md:order-1 md:text-left md:pl-12' : ''}`}>
                                 <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{point.title}</h3>
@@ -185,9 +161,9 @@ const OurStory = ({ theme }) => {
                             <div className={`md:w-1/2 md:pl-12 text-center md:text-left ${index % 2 !== 0 ? 'md:order-0 md:text-right md:pr-12' : ''}`}>
                                 <h4 className={`text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r ${gradientClass}`}>{point.year}</h4>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
         </section>
     );
@@ -195,21 +171,35 @@ const OurStory = ({ theme }) => {
 
 
 const Gallery = () => {
-    const [theme, setTheme] = useState('dark');
-    const toggleTheme = () => {
-        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-    };
+    // State for light/dark theme, initialized from local storage or system preference
+    const [theme, setTheme] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                return storedTheme;
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        return 'dark'; // Default to dark on server side
+    });
 
-    const heroRef = useRef(null);
-    const isInView = useInView(heroRef, { once: true, amount: 0.5 });
-    const { scrollY } = useScroll();
-    const parallaxY = useTransform(scrollY, [0, 500], [0, -200]);
+    // Save theme to local storage whenever it changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('theme', theme);
+        }
+    }, [theme]);
+
+    const toggleTheme = useCallback(() => {
+        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    }, []);
 
     // State for the pop-up image
     const [selectedImage, setSelectedImage] = useState(null);
     // State for the pop-up video
     const [selectedVideo, setSelectedVideo] = useState(null);
 
+    // Reverted to original galleryImages array
     const galleryImages = [
         { src: 'https://gvlclinic.ru/wp-content/uploads/2021/06/sgdhgdhddh.jpg', className: 'col-span-2 row-span-2' },
         { src: 'https://avatars.mds.yandex.net/get-altay/13970739/2a000001927b427a8acda582a922b8ee1c35/orig', className: '' },
@@ -236,34 +226,34 @@ const Gallery = () => {
     const videoLinks = [
         'https://www.youtube.com/embed/_DwcXVi0ugo',
         'https://www.youtube.com/embed/-2ilXbquols',
-        'https://www.youtube.com/embed/nL7P2o3J5qE?si=jM28hF7X_lC3O-zC',
-        'https://www.youtube.com/embed/bL6t11Jt950?si=L3TjV6P-oV51F7k',
+        'https://www.youtube.com/embed/-2ilXbquols',
+        'https://www.youtube.com/embed/_DwcXVi0ugo',
+        
     ];
     
     const shortVideos = [
-        'https://www.youtube.com/embed/AC_7D3E9wNY',
-        'https://www.youtube.com/embed/oJbC-7y943w',
-        'https://www.youtube.com/embed/q_mYhB3dC3M',
-        'https://www.youtube.com/embed/oP26oWvB7eE',
-        'https://www.youtube.com/embed/vA2g-iJt4tM'
+        'https://www.youtube.com/shorts/8BfaJSEhMAU',
+        'https://www.youtube.com/shorts/AC_7D3E9wNY',
+        'https://www.youtube.com/shorts/QlAf7-EbCMU',
+        'https://www.youtube.com/shorts/DweHkUA06IU',
+        'https://www.youtube.com/shorts/MmJdbJy2wNY'
     ];
     
-    const colors = theme === 'dark' ? {
-        bg: "bg-gray-950",
-        text: "text-gray-200",
-        secondaryText: "text-gray-400",
-        primaryAccent: "text-yellow-400",
-        secondaryAccent: "text-teal-400",
-        sectionBg: "bg-gray-900",
-        button: "bg-yellow-500 hover:bg-yellow-600 text-white",
-    } : {
-        bg: "bg-white",
-        text: "text-gray-900",
-        secondaryText: "text-gray-600",
-        primaryAccent: "text-yellow-600",
-        secondaryAccent: "text-teal-600",
-        sectionBg: "bg-gray-100",
-        button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+    // Function to get colors based on theme
+    const getColors = (sectionTheme) => {
+        return sectionTheme === 'dark' ? {
+            bg: "bg-gray-950",
+            text: "text-gray-200",
+            secondaryText: "text-gray-400",
+            primaryAccent: "text-yellow-400",
+            button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+        } : {
+            bg: "bg-white",
+            text: "text-gray-900",
+            secondaryText: "text-gray-600",
+            primaryAccent: "text-yellow-600",
+            button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+        };
     };
 
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -271,208 +261,162 @@ const Gallery = () => {
         const handleScroll = () => {
             setShowScrollTop(window.scrollY > 500);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+    
+    // Define colors for each section
+    const heroColors = getColors('dark');
+    const galleryColors = getColors('light');
+    const storyColors = getColors('dark');
+    const whyColors = getColors('light');
+    const videosColors = getColors('dark');
+    const reelsColors = getColors('light');
+    
+    const heroRef = useRef(null);
 
     return (
-        <div className={`min-h-screen ${colors.bg} ${colors.text} font-sans overflow-x-hidden transition-colors duration-500 relative`}>
+        <div className={`min-h-screen font-sans overflow-x-hidden transition-colors duration-500 relative`}>
             <ThemeChanger theme={theme} toggleTheme={toggleTheme} />
 
             {/* Image Pop-up Modal */}
-            <AnimatePresence>
-                {selectedImage && (
-                    <motion.div
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-md"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+            {selectedImage && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-md"
+                    onClick={() => setSelectedImage(null)}
+                >
+                    <button
+                        className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-80 transition-all"
                         onClick={() => setSelectedImage(null)}
                     >
-                        <motion.button
-                            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-80 transition-all"
-                            onClick={() => setSelectedImage(null)}
-                            whileHover={{ scale: 1.1, rotate: 90 }}
-                            whileTap={{ scale: 0.9 }}
-                        >
-                            <X size={24} />
-                        </motion.button>
-                        <motion.img
-                            src={selectedImage}
-                            alt="Full Screen View"
-                            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        <X size={24} />
+                    </button>
+                    <img
+                        src={selectedImage}
+                        alt="Full Screen View"
+                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
+                    />
+                </div>
+            )}
 
-            {/* Video Pop-up Modal */}
-            <AnimatePresence>
-                {selectedVideo && (
-                    <motion.div
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-md"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+            {/* Video Pop-up Modal - Spacing and size adjusted here */}
+            {selectedVideo && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-black bg-opacity-80 backdrop-blur-md"
+                    onClick={() => setSelectedVideo(null)}
+                >
+                    <button
+                        className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-80 transition-all"
                         onClick={() => setSelectedVideo(null)}
                     >
-                        <motion.button
-                            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-80 transition-all"
-                            onClick={() => setSelectedVideo(null)}
-                            whileHover={{ scale: 1.1, rotate: 90 }}
-                            whileTap={{ scale: 0.9 }}
-                        >
-                            <X size={24} />
-                        </motion.button>
-                        <motion.div
-                            className="w-full h-full max-w-4xl aspect-video rounded-lg shadow-2xl overflow-hidden"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <iframe
-                                className="w-full h-full"
-                                src={`${selectedVideo}?autoplay=1`}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerPolicy="strict-origin-when-cross-origin"
-                                allowFullScreen
-                            ></iframe>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
+                        <X size={24} />
+                    </button>
+                    <div
+                        className="w-full h-full max-w-6xl aspect-video rounded-lg shadow-2xl overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <iframe
+                            className="w-full h-full"
+                            src={`${selectedVideo}?autoplay=1`}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
+                </div>
+            )}
 
             {/* Hero Section with Parallax */}
-            <motion.section
+            <section
                 ref={heroRef}
-                className={`relative flex flex-col items-center justify-center min-h-[50vh] text-center p-8 overflow-hidden`}
+                className={`relative flex flex-col items-center justify-center min-h-[50vh] text-center p-8 overflow-hidden ${heroColors.bg} ${heroColors.text}`}
             >
-                <motion.div
+                <div
                     className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
                     style={{
                         backgroundImage: `url('https://images.unsplash.com/photo-1520696342898-1f190d635c05?q=80&w=1935&auto=format&fit=crop')`,
-                        y: parallaxY
                     }}
                 />
                 <div className="relative z-10 max-w-4xl mx-auto">
-                    <motion.h1
+                    <h1
                         className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-orange-500"
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -50 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         Our Masterpieces
-                    </motion.h1>
-                    <motion.p
-                        className={`text-xl md:text-2xl mb-8 opacity-80 ${colors.secondaryText}`}
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
+                    </h1>
+                    <p
+                        className={`text-xl md:text-2xl mb-8 opacity-80 ${heroColors.secondaryText}`}
                     >
                         A visual journey through our finest work and unforgettable moments.
-                    </motion.p>
-                    <motion.button
-                        className={`px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300 ${colors.button}`}
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0.5 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                    </p>
+                    <button
+                        className={`px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300 ${heroColors.button}`}
+                        onClick={() => {
+                            const gallerySection = document.getElementById('photo-gallery-section');
+                            if (gallerySection) {
+                                gallerySection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }}
                     >
                         Explore Gallery
-                    </motion.button>
+                    </button>
                 </div>
-            </motion.section>
+            </section>
             
             {/* Photo Gallery Section */}
-            <section className={`py-16 px-4 md:px-8 ${colors.sectionBg}`}>
+            <section 
+                id="photo-gallery-section" 
+                className={`py-16 px-4 md:px-8 ${galleryColors.bg} ${galleryColors.text}`}
+            >
                 <div className="max-w-7xl mx-auto text-center">
                     <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
                         Our Portfolio
                     </span>
-                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${colors.text}`}>Photo Gallery</h2>
-                    <p className={`text-center text-lg mb-12 ${colors.secondaryText}`}>Capture your moments in perfect light.</p>
-                    <motion.div
+                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${galleryColors.text}`}>Photo Gallery</h2>
+                    <p className={`text-center text-lg mb-12 ${galleryColors.secondaryText}`}>Capture your moments in perfect light.</p>
+                    <div
                         className="grid grid-cols-2 md:grid-cols-4 gap-6"
-                        variants={{
-                            visible: { transition: { staggerChildren: 0.1 } },
-                        }}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.25 }}
                     >
                         {galleryImages.map((image, index) => (
-                            <motion.div
+                            <div
                                 key={index}
                                 className={`relative overflow-hidden rounded-lg shadow-xl ${image.className} cursor-pointer group`}
-                                variants={{
-                                    hidden: { opacity: 0, scale: 0.8, y: 50 },
-                                    visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
-                                }}
-                                whileHover={{ scale: 1.05, rotate: [0, 1, -1, 0] }}
-                                transition={{ duration: 0.3 }}
                                 onClick={() => setSelectedImage(image.src)}
                             >
                                 <img src={image.src} alt={`Gallery Image ${index + 1}`} className="w-full h-full object-cover" />
                                 <div className={`absolute inset-0 bg-gray-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm`}>
                                     <Eye size={36} className="text-white" />
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
             {/* Our Story Section */}
             <OurStory theme={theme} />
-
-            <div className='text-center mt-16'>
-                <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
-                    Why Us?
-                </span>
-            </div>
             <Gallerywhy />
 
-            {/* Videos Section */}
-            <section className={`py-16 px-4 md:px-8 ${colors.bg}`}>
+            {/* Videos Section - Simple animation applied here */}
+            <section 
+                className={`py-16 px-4 md:px-8 ${videosColors.bg} ${videosColors.text}`}
+            >
                 <div className="max-w-7xl mx-auto text-center">
                     <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
                         Our Vision
                     </span>
-                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${colors.text}`}>Video Showcase</h2>
-                    <p className={`text-center text-lg mb-12 ${colors.secondaryText}`}>Watch our creative process and final results.</p>
-                    <motion.div
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                        variants={{
-                            visible: { transition: { staggerChildren: 0.1 } },
-                        }}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.25 }}
-                    >
+                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${videosColors.text}`}>Video Showcase</h2>
+                    <p className={`text-center text-lg mb-12 ${videosColors.secondaryText}`}>Watch our creative process and final results.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {videoLinks.map((link, index) => (
-                            <motion.div
+                            <div
                                 key={index}
                                 className="relative aspect-video w-full rounded-lg overflow-hidden shadow-xl"
-                                variants={{
-                                    hidden: { opacity: 0, y: 50 },
-                                    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-                                }}
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ type: "spring", stiffness: 200, damping: 15 }}
                             >
                                 <iframe
                                     src={link}
@@ -483,44 +427,26 @@ const Gallery = () => {
                                     allowFullScreen
                                     className="w-full h-full"
                                 ></iframe>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
             
             {/* Reels Section (Horizontal Slider) */}
-            <AutoAnimatedSlider videos={shortVideos} theme={theme} onVideoClick={setSelectedVideo} />
+            <AutoAnimatedSlider videos={shortVideos} theme={reelsColors} onVideoClick={setSelectedVideo} />
 
             {/* Scroll to Top Button */}
-            <AnimatePresence>
-                {showScrollTop && (
-                    <motion.button
-                        className={`fixed bottom-8 right-8 p-3 rounded-full shadow-lg z-50 ${colors.button} text-white`}
-                        onClick={scrollToTop}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        <ArrowUp size={24} />
-                    </motion.button>
-                )}
-            </AnimatePresence>
-
-            {/* Still Questions Section with new header */}
-            <div className='text-center mt-16'>
-                <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
-                    Get in Touch
-                </span>
-            </div>
+            {showScrollTop && (
+                <button
+                    className={`fixed bottom-8 right-8 p-3 rounded-full shadow-lg z-50 ${heroColors.button} text-white`}
+                    onClick={scrollToTop}
+                >
+                    <ArrowUp size={24} />
+                </button>
+            )}
             <StillQuestionsSection />
-            <Testimonials/>
-
-            {/* GalleryWhy Section with new header */}
-            
-            
+            <Testimonials/>  
         </div>
     );
 };
