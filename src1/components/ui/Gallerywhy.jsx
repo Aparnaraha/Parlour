@@ -1,88 +1,120 @@
-import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { Scissors, Crown, Award } from "lucide-react";
+"use client";
 
-export default function OurPromiseSection() {
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { Scissors, Crown, Award } from "lucide-react";
+import photo12 from "../../img/parallax.jpg";
+
+// Isolate static data and variants outside the component to prevent re-creation
+const headingVariants = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
+// Hover effect for cards
+const hoverCard = {
+  initial: { scale: 1 },
+  hover: { scale: 1.02, transition: { duration: 0.2 } },
+};
+
+// Hover for icons
+const hoverIcon = {
+  initial: { y: 0 },
+  hover: { y: -4, transition: { duration: 0.2 } },
+};
+
+// Data
+const middleCards = [
+  {
+    title: "Master Barbers",
+    description:
+      "Our skilled barbers are artists dedicated to crafting your perfect look with precision and style.",
+  },
+  {
+    title: "Premium Products",
+    description:
+      "We use only the finest grooming products for a luxurious and lasting finish.",
+  },
+  {
+    title: "Relaxing Ambiance",
+    description:
+      "Step into a space designed for your comfort and relaxation, a true retreat from the everyday hustle.",
+  },
+];
+
+const rightCards = [
+  { icon: <Award size={48} />, text: "EXPERT STYLISTS" },
+  { icon: <Scissors size={48} />, text: "PRECISION CUTS" },
+  { icon: <Crown size={48} />, text: "ROYAL TREATMENT" },
+];
+
+const OurPromiseSection = React.memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  // Variants
-  const headingVariants = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.2 } },
-  };
-
-  const itemVariants = {
-    hidden: { y: 40, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
-  };
-
-  // Hover effect for cards
-  const hoverCard = {
-    initial: { scale: 1 },
-    hover: { scale: 1.02, transition: { duration: 0.2 } },
-  };
-
-  // Hover for icons
-  const hoverIcon = {
-    initial: { y: 0 },
-    hover: { y: -4, transition: { duration: 0.2 } },
-  };
-
-  // Data
-  const middleCards = [
-    {
-      title: "Master Barbers",
-      description:
-        "Our skilled barbers are artists dedicated to crafting your perfect look with precision and style.",
-    },
-    {
-      title: "Premium Products",
-      description:
-        "We use only the finest grooming products for a luxurious and lasting finish.",
-    },
-    {
-      title: "Relaxing Ambiance",
-      description:
-        "Step into a space designed for your comfort and relaxation, a true retreat from the everyday hustle.",
-    },
-  ];
-
-  const rightCards = [
-    { icon: <Award size={48} />, text: "EXPERT STYLISTS" },
-    { icon: <Scissors size={48} />, text: "PRECISION CUTS" },
-    { icon: <Crown size={48} />, text: "ROYAL TREATMENT" },
-  ];
-
   return (
     <>
-      <style>
-        {`
-          .blue-gradient-text {
-            background: linear-gradient(90deg, #3498db 0%, #2c3e50 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-          .gold-gradient-text {
-            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-        `}
-      </style>
+      <style jsx>{`
+        .gold-gradient-text {
+          background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .parallax-wrapper {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          z-index: -1;
+        }
+        .parallax-background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          will-change: transform;
+          transform: translate3d(0, 0, -1px) scale(1.1); /* This creates the parallax effect */
+          z-index: -1;
+        }
+      `}</style>
 
-      <div className="bg-white py-16 md:py-24">
+      <section className="relative min-h-screen flex items-center justify-center py-20 lg:py-40 overflow-hidden">
+        {/* Parallax Background using CSS */}
+        <div className="parallax-wrapper">
+          <div className="parallax-background">
+            <img 
+              src={photo12}
+              alt="Barbershop mirror and lights"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        {/* Main content container */}
         <motion.div
           ref={ref}
-          className="w-full max-w-7xl mx-auto px-4 text-center"
-          variants={containerVariants}
+          className="relative z-10 w-full max-w-7xl mx-auto p-4 md:p-8 lg:p-12 rounded-xl text-center shadow-2xl backdrop-blur-md bg-white/30"
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
+          variants={containerVariants}
+          style={{
+            backdropFilter: 'blur(12px)',
+          }}
         >
           {/* Heading */}
           <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow mx-auto">
@@ -117,6 +149,7 @@ export default function OurPromiseSection() {
                 className="w-full h-full object-cover"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
+                loading="lazy"
               />
             </motion.div>
 
@@ -172,7 +205,9 @@ export default function OurPromiseSection() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </section>
     </>
   );
-}
+});
+
+export default OurPromiseSection;

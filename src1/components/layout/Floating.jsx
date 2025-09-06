@@ -1,7 +1,7 @@
 // src/components/FloatingButtons.jsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Phone, ArrowUp } from "lucide-react";
 import EnquiryFormModal from '../ui/EnquiryModalForm'; // Import your custom modal component

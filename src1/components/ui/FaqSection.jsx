@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search, ArrowLeft, CalendarCheck, Scissors, Box, Info } from "lucide-react";
 
+// --- Static data moved outside the component for performance ---
 const faqs = [
   {
     id: 1,
@@ -189,6 +190,42 @@ const categoryIcons = {
   general: <Info />,
 };
 
+// Utility function to get colors based on theme, similar to Gallery.jsx
+const getColors = (theme) => {
+  return theme === 'dark' ? {
+    bg: "bg-gray-950",
+    text: "text-gray-200",
+    secondaryText: "text-gray-400",
+    primaryAccent: "text-yellow-400",
+    secondaryAccent: "text-orange-500",
+    sectionBg: "bg-gray-900",
+    cardBg: "bg-gray-800/70",
+    cardHover: "hover:bg-gray-800",
+    cardBorder: "border-gray-700",
+    buttonBg: "bg-gray-800/60",
+    buttonText: "text-gray-200",
+    buttonHoverBg: "hover:bg-gray-800",
+    searchPlaceholder: "placeholder-gray-400",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,165,0,0.3)"
+  } : {
+    bg: "bg-white",
+    text: "text-gray-900",
+    secondaryText: "text-gray-600",
+    primaryAccent: "text-yellow-600",
+    secondaryAccent: "text-orange-500",
+    sectionBg: "bg-gray-50",
+    cardBg: "bg-white/70",
+    cardHover: "hover:bg-white",
+    cardBorder: "border-white/50",
+    buttonBg: "bg-white/60",
+    buttonText: "text-gray-700",
+    buttonHoverBg: "hover:bg-white",
+    searchPlaceholder: "placeholder-gray-500",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.1), 0 0 20px rgba(255,165,0,0.3)"
+  };
+};
+
+// Memoized motion variants to prevent re-creation on every render
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: {
@@ -239,83 +276,48 @@ const buttonItem = {
   },
 };
 
-// Utility function to get colors based on theme, similar to Gallery.jsx
-const getColors = (theme) => {
-  return theme === 'dark' ? {
-    bg: "bg-gray-950",
-    text: "text-gray-200",
-    secondaryText: "text-gray-400",
-    primaryAccent: "text-yellow-400",
-    secondaryAccent: "text-orange-500",
-    sectionBg: "bg-gray-900",
-    cardBg: "bg-gray-800/70",
-    cardHover: "hover:bg-gray-800",
-    cardBorder: "border-gray-700",
-    buttonBg: "bg-gray-800/60",
-    buttonText: "text-gray-200",
-    buttonHoverBg: "hover:bg-gray-800",
-    searchPlaceholder: "placeholder-gray-400",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,165,0,0.3)"
-  } : {
-    bg: "bg-white",
-    text: "text-gray-900",
-    secondaryText: "text-gray-600",
-    primaryAccent: "text-yellow-600",
-    secondaryAccent: "text-orange-500",
-    sectionBg: "bg-gray-50",
-    cardBg: "bg-white/70",
-    cardHover: "hover:bg-white",
-    cardBorder: "border-white/50",
-    buttonBg: "bg-white/60",
-    buttonText: "text-gray-700",
-    buttonHoverBg: "hover:bg-white",
-    searchPlaceholder: "placeholder-gray-500",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.1), 0 0 20px rgba(255,165,0,0.3)"
-  };
-};
-
-const PremiumFaqSection = ({ theme = 'light' }) => {
+const PremiumFaqSection = memo(({ theme = 'light' }) => {
   const [openId, setOpenId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   
-  const colors = getColors(theme);
+  const colors = useMemo(() => getColors(theme), [theme]);
   const isDark = theme === 'dark';
 
-  const handleCategorySelect = (category) => {
+  const handleCategorySelect = useCallback((category) => {
     setSelectedCategory(category);
     setOpenId(null);
     setSearchQuery("");
-  };
+  }, []);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setSelectedCategory(null);
     setOpenId(null);
     setSearchQuery("");
-  };
+  }, []);
 
-  const allFilteredFaqs = faqs.filter((faq) => {
-    return (
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+  const handleSearch = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
-  const categoryFilteredFaqs = faqs.filter((faq) => {
-    const matchesCategory = faq.category === selectedCategory;
-    const matchesSearch =
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const displayFaqs = selectedCategory
-    ? categoryFilteredFaqs
-    : allFilteredFaqs;
-
-  const toggleFaq = (id) => {
+  const toggleFaq = useCallback((id) => {
     setOpenId(openId === id ? null : id);
-  };
+  }, [openId]);
+
+  // Use useMemo to prevent re-calculating the filtered list on every render
+  const displayFaqs = useMemo(() => {
+    const isFiltered = selectedCategory || searchQuery;
+    if (isFiltered) {
+      return faqs.filter((faq) => {
+        const matchesCategory = selectedCategory === null || faq.category === selectedCategory;
+        const matchesSearch =
+          faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+    }
+    return faqs.slice(0, 4); // Display only the first 4 for the initial view
+  }, [selectedCategory, searchQuery]);
 
   const isFiltered = selectedCategory || searchQuery;
 
@@ -382,7 +384,7 @@ const PremiumFaqSection = ({ theme = 'light' }) => {
               type="text"
               placeholder="Search all FAQs..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearch}
               className={`w-full py-4 pl-12 pr-6 border-2 border-transparent rounded-full shadow-lg transition-all duration-500 backdrop-blur-md focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 ${colors.cardBg} ${colors.text} ${colors.searchPlaceholder}`}
             />
             <motion.div
@@ -417,7 +419,7 @@ const PremiumFaqSection = ({ theme = 'light' }) => {
                   <motion.button
                     key={category}
                     onClick={() => handleCategorySelect(category)}
-                    className={`px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform-gpu shadow-xl ${colors.buttonBg} ${colors.buttonText} ${colors.buttonHoverBg} hover:shadow-2xl hover:-translate-y-1 flex items-center gap-2`}
+                    className={`px-8 py-4 rounded-full font-bold text-md transition-all duration-300 transform-gpu shadow-xl ${colors.buttonBg} ${colors.buttonText} ${colors.buttonHoverBg} hover:shadow-2xl hover:-translate-y-1 flex items-center gap-2`}
                     variants={buttonItem}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -433,7 +435,7 @@ const PremiumFaqSection = ({ theme = 'light' }) => {
                 initial="hidden"
                 animate="show"
               >
-                {faqs.slice(0, 4).map((faq) => (
+                {displayFaqs.map((faq) => (
                   <motion.div
                     key={faq.id}
                     className={`relative rounded-2xl p-6 overflow-hidden cursor-pointer transition-all duration-300 transform-gpu group ${colors.cardBg} ${colors.cardHover}`}
@@ -526,7 +528,7 @@ const PremiumFaqSection = ({ theme = 'light' }) => {
                     >
                       <div className={`absolute inset-0 rounded-2xl border-2 ${colors.cardBorder} pointer-events-none`} />
                       <div className="relative z-10 flex items-center justify-between">
-                        <h3 className={`text-xl font-semibold text-left ${colors.text}`}>
+                        <h3 className={`text-lg font-semibold text-left ${colors.text}`}>
                           {faq.question}
                         </h3>
                         <motion.div
@@ -583,6 +585,6 @@ const PremiumFaqSection = ({ theme = 'light' }) => {
       </div>
     </section>
   );
-};
+});
 
 export default PremiumFaqSection;

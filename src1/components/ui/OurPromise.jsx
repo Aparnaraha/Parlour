@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, memo } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Leaf, LifeBuoy, BadgeCheck, ShieldCheck } from "lucide-react";
@@ -9,52 +9,54 @@ import photo2 from "../../img/photo3.jpg";
 import photo3 from "../../img/photo24.jpg";
 
 
-export default function OurPromiseSection() {
+// Isolate static data and variants outside the component to prevent re-creation
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.3, delayChildren: 0.2 } },
+};
+
+const headingVariants = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+const itemVariants = {
+  hidden: { y: 50, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const descriptiveCardHoverVariants = {
+  initial: { scale: 1, y: 0, boxShadow: "0px 6px 25px rgba(0,0,0,0.1)" },
+  hover: { scale: 1.05, y: -5, boxShadow: "0px 12px 40px rgba(0,0,0,0.2)", transition: { duration: 0.3, ease: "easeOut" } },
+};
+
+const slideDownVariants = {
+  initial: { y: "-100%" },
+  hover: { y: "0%", transition: { duration: 0.3, ease: "easeOut" } },
+};
+
+const iconHoverVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.1, rotate: 15 },
+};
+
+const serviceCards = [
+  { image: photo1, title: "Eco-Friendly Hair Care", description: "We use organic, eco-friendly products for precision cutting, styling, and treatments for all hair types." },
+  { image: photo2, title: "Exceptional Skin Care", description: "Our team provides exceptional facials and rejuvenating treatments with a focus on client satisfaction." },
+  { image: photo3, title: "Uncompromising Quality", description: "Experience professional makeup applications with our highest standard of quality and precision." },
+];
+
+const promiseCards = [
+  { icon: <Leaf className="text-4xl" />, text: "Eco-Friendly Products" },
+  { icon: <LifeBuoy className="text-4xl" />, text: "Exceptional Support" },
+  { icon: <BadgeCheck className="text-4xl" />, text: "Uncompromising Quality" },
+  { icon: <ShieldCheck className="text-4xl" />, text: "Client Safety" },
+];
+
+
+const OurPromiseSection = memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.3, delayChildren: 0.2 } },
-  };
-
-  const headingVariants = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
-  };
-
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  };
-
-  const descriptiveCardHoverVariants = {
-    initial: { scale: 1, y: 0, boxShadow: "0px 6px 25px rgba(0,0,0,0.1)" },
-    hover: { scale: 1.05, y: -5, boxShadow: "0px 12px 40px rgba(0,0,0,0.2)", transition: { duration: 0.3, ease: "easeOut" } },
-  };
-
-  const slideDownVariants = {
-    initial: { y: "-100%" },
-    hover: { y: "0%", transition: { duration: 0.3, ease: "easeOut" } },
-  };
-
-  const iconHoverVariants = {
-    initial: { scale: 1 },
-    hover: { scale: 1.1, rotate: 15 },
-  };
-
-  const serviceCards = [
-    { image: photo1, title: "Eco-Friendly Hair Care", description: "We use organic, eco-friendly products for precision cutting, styling, and treatments for all hair types." },
-    { image: photo2, title: "Exceptional Skin Care", description: "Our team provides exceptional facials and rejuvenating treatments with a focus on client satisfaction." },
-    { image: photo3, title: "Uncompromising Quality", description: "Experience professional makeup applications with our highest standard of quality and precision." },
-  ];
-
-  const promiseCards = [
-    { icon: <Leaf className="text-4xl" />, text: "Eco-Friendly Products" },
-    { icon: <LifeBuoy className="text-4xl" />, text: "Exceptional Support" },
-    { icon: <BadgeCheck className="text-4xl" />, text: "Uncompromising Quality" },
-    { icon: <ShieldCheck className="text-4xl" />, text: "Client Safety" },
-  ];
 
   return (
     <div className="bg-gray-50 pt-10 sm:pt-16 pb-20 sm:pb-32" ref={ref}>
@@ -128,4 +130,6 @@ export default function OurPromiseSection() {
       </motion.div>
     </div>
   );
-}
+});
+
+export default OurPromiseSection;

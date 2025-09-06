@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MapPin, ArrowUp, Sun, Moon } from "lucide-react";
 import FAQ from '../ui/FaqSection';
@@ -25,7 +25,7 @@ const ThemeChanger = ({ theme, toggleTheme }) => (
 /**
  * Hero section for the contact page, featuring a background image, animated text, and theme toggle.
  */
-const HeroContact = ({ theme, colors, toggleTheme }) => {
+const HeroContact = React.memo(({ theme, colors, toggleTheme }) => {
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -46,21 +46,8 @@ const HeroContact = ({ theme, colors, toggleTheme }) => {
 
   return (
     <section
-      // Fix: Removed the fixed height class h-[40vh] to allow content to dictate height.
       className={`relative flex items-center justify-center overflow-hidden text-center transition-colors duration-500 ${colors.bg} py-16`}
     >
-      {/* Background image */}
-      {/* <div className="absolute inset-0">
-        <div
-          className={`w-full h-full bg-cover bg-center opacity-10`}
-          style={{
-            backgroundImage:
-              'url("https://avatars.mds.yandex.net/i?id=31f0b18eac8ca50ebe0aff889f57dfd9829b80a1-12538254-images-thumbs&n=13")',
-          }}
-        />
-      </div> */}
-
-      {/* Hero content */}
       <motion.div
         className="relative z-20 px-4 flex flex-col items-center"
         initial="hidden"
@@ -85,7 +72,6 @@ const HeroContact = ({ theme, colors, toggleTheme }) => {
           your questions.
         </motion.p>
 
-        {/* Theme Toggle inside Hero */}
         <motion.div
           variants={textVariants}
           className="mt-6 flex justify-center"
@@ -95,74 +81,63 @@ const HeroContact = ({ theme, colors, toggleTheme }) => {
       </motion.div>
     </section>
   );
+});
+
+// Moved variants outside the component to prevent re-creation on every render
+const reachOutSectionVariants = {
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.1 },
+  },
+};
+
+const reachOutItemVariants = {
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 /**
  * Reach Out Section (contact details + map).
- * Hardcoded to light theme for better readability.
  */
-const ReachOutSection = () => {
-  // Fix: Removed useInView hook to ensure the section is visible immediately.
-  const sectionVariants = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  const lightThemeColors = {
-    sectionBgGradient: "bg-gradient-to-br from-sky-50 to-pink-50",
-    formCardBg: "bg-white",
-    text: "text-gray-900",
-    secondaryText: "text-gray-600",
-    primaryAccent: "text-yellow-600",
-    inputBg: "bg-white",
-    inputBorder: "border-gray-300",
-  };
-
+const ReachOutSection = React.memo(({ colors }) => {
   return (
     <motion.section
-      className={`relative py-20 px-4 md:px-6 ${lightThemeColors.sectionBgGradient}`}
+      className={`relative py-20 px-4 md:px-6 bg-gray-50 text-gray-900`}
       initial={{ opacity: 0, y: 50 }}
       animate="visible"
-      variants={sectionVariants}
+      variants={reachOutSectionVariants}
     >
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Contact Form */}
         <div
-          className={`p-8 shadow-lg ${lightThemeColors.formCardBg}`}
+          className={`p-8 shadow-lg bg-white`}
           style={{ border: `1px solid #e5e7eb`, borderRadius: 0 }}
         >
           <motion.h2
-            variants={itemVariants}
-            className={`text-3xl font-bold mb-4 ${lightThemeColors.text}`}
+            variants={reachOutItemVariants}
+            className={`text-3xl font-bold mb-4 text-gray-900`}
           >
             Reach Out, We're Here!
           </motion.h2>
           <motion.p
-            variants={itemVariants}
-            className={`${lightThemeColors.secondaryText} mb-8`}
+            variants={reachOutItemVariants}
+            className={`text-gray-600 mb-8`}
           >
             We're dedicated to serving you across the city. Discover our
             locations below or send us a quick inquiry!
           </motion.p>
 
-          <motion.div variants={itemVariants} className="mb-6 space-y-4">
+          <motion.div variants={reachOutItemVariants} className="mb-6 space-y-4">
             <div className="flex items-start text-sm">
               <MapPin
                 size={20}
-                className={`${lightThemeColors.primaryAccent} mr-3`}
+                className={`text-yellow-600 mr-3`}
               />
               <div>
-                <p className={`${lightThemeColors.text} font-semibold`}>
+                <p className={`text-gray-900 font-semibold`}>
                   Allex Gents Parlour
                 </p>
-                <p className={`${lightThemeColors.secondaryText}`}>
+                <p className={`text-gray-600`}>
                   751015, N3 Block, IRC Village, Bhubaneswar, Odisha
                 </p>
               </div>
@@ -170,18 +145,18 @@ const ReachOutSection = () => {
             <div className="flex items-center text-sm">
               <Phone
                 size={20}
-                className={`${lightThemeColors.primaryAccent} mr-3`}
+                className={`text-yellow-600 mr-3`}
               />
               <a
                 href="tel:+919876543210"
-                className={`${lightThemeColors.text} hover:underline`}
+                className={`text-gray-900 hover:underline`}
               >
                 +91 98765 43210
               </a>
               ,
               <a
                 href="tel:+919123456789"
-                className={`${lightThemeColors.text} ml-1 hover:underline`}
+                className={`text-gray-900 ml-1 hover:underline`}
               >
                 +91 91234 56789
               </a>
@@ -189,11 +164,11 @@ const ReachOutSection = () => {
             <div className="flex items-center text-sm">
               <Mail
                 size={20}
-                className={`${lightThemeColors.primaryAccent} mr-3`}
+                className={`text-yellow-600 mr-3`}
               />
               <a
                 href="mailto:allexparlour@gmail.com"
-                className={`${lightThemeColors.text} hover:underline`}
+                className={`text-gray-900 hover:underline`}
               >
                 allexparlour@gmail.com
               </a>
@@ -201,48 +176,48 @@ const ReachOutSection = () => {
           </motion.div>
 
           <motion.h3
-            variants={itemVariants}
-            className={`text-xl font-bold mb-4 ${lightThemeColors.text}`}
+            variants={reachOutItemVariants}
+            className={`text-xl font-bold mb-4 text-gray-900`}
           >
             Contact Us
           </motion.h3>
           <form className="space-y-4">
-            <motion.div variants={itemVariants}>
+            <motion.div variants={reachOutItemVariants}>
               <input
                 type="text"
                 placeholder="Your Full Name"
-                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                className={`w-full p-3 border bg-white border-gray-300 text-gray-900`}
                 style={{ borderRadius: 0 }}
               />
             </motion.div>
-            <motion.div variants={itemVariants}>
+            <motion.div variants={reachOutItemVariants}>
               <input
                 type="email"
                 placeholder="Your Email Address"
-                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                className={`w-full p-3 border bg-white border-gray-300 text-gray-900`}
                 style={{ borderRadius: 0 }}
               />
             </motion.div>
-            <motion.div variants={itemVariants}>
+            <motion.div variants={reachOutItemVariants}>
               <input
                 type="tel"
                 name="phone"
                 placeholder="Your Phone Number"
-                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                className={`w-full p-3 border bg-white border-gray-300 text-gray-900`}
                 style={{ borderRadius: 0 }}
                 required
               />
             </motion.div>
-            <motion.div variants={itemVariants}>
+            <motion.div variants={reachOutItemVariants}>
               <textarea name="message" placeholder="Your Message / Inquiry" 
-                className={`w-full p-3 border ${lightThemeColors.inputBg} ${lightThemeColors.inputBorder} ${lightThemeColors.text}`}
+                className={`w-full p-3 border bg-white border-gray-300 text-gray-900`}
                 style={{ borderRadius: 0 }}
                 required
               />
             </motion.div>
             
             <motion.button
-              variants={itemVariants}
+              variants={reachOutItemVariants}
               type="submit"
               className={`w-full py-3 font-semibold text-white bg-green-600 hover:bg-green-700`}
               style={{ borderRadius: 0 }}
@@ -263,13 +238,13 @@ const ReachOutSection = () => {
             className={`py-8 px-8 bg-gradient-to-r from-yellow-500 to-orange-600 text-center`}
           >
             <motion.h2
-              variants={itemVariants}
+              variants={reachOutItemVariants}
               className={`text-3xl font-bold mb-2 text-white`}
             >
               Locate Us Easily
             </motion.h2>
             <motion.p
-              variants={itemVariants}
+              variants={reachOutItemVariants}
               className={`text-sm text-gray-200`}
             >
               We're available throughout your city. Find our nearest hub or
@@ -279,7 +254,7 @@ const ReachOutSection = () => {
 
           {/* Map with tooltip overlay */}
           <motion.div
-            variants={itemVariants}
+            variants={reachOutItemVariants}
             className="relative w-full flex-grow"
           >
             <iframe
@@ -306,13 +281,13 @@ const ReachOutSection = () => {
       </div>
     </motion.section>
   );
-};
+});
 
 /**
  * Main Contact Page
  */
 const ContactPage = () => {
-  const [theme, setTheme] = useState("dark"); // Default dark theme
+  const [theme, setTheme] = useState("dark");
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -321,13 +296,13 @@ const ContactPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
+  }, []);
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToTop = useCallback(() => window.scrollTo({ top: 0, behavior: "smooth" }), []);
 
-  const colorsForPage =
+  const colorsForPage = useMemo(() =>
     theme === "dark"
       ? {
           bg: "bg-[#0c1824]",
@@ -342,7 +317,9 @@ const ContactPage = () => {
           secondaryText: "text-gray-600",
           primaryAccent: "text-yellow-600",
           accentButton: "bg-yellow-500 text-white hover:bg-yellow-600",
-        };
+        },
+    [theme]
+  );
 
   return (
     <div
@@ -353,9 +330,8 @@ const ContactPage = () => {
         colors={colorsForPage}
         toggleTheme={toggleTheme}
       />
-      <ReachOutSection />
+      <ReachOutSection colors={colorsForPage} />
 
-      {/* Still Have Questions */}
       <StillQuestionsSection />
       <FAQ />
     </div>

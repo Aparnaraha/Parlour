@@ -3,13 +3,14 @@
 import React, { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
-  Phone, MapPin, Mail, Star, Heart, Users, Briefcase, HandPlatter, Sparkles, Scissors, Diamond, Award, Hourglass, Facebook, Twitter, Instagram, Linkedin, Wifi, CreditCard, Clock // Corrected: Replaced Ring with Diamond
+  Phone, MapPin, Mail, Star, Heart, Users, Briefcase, HandPlatter, Sparkles, Scissors, Diamond, Award, Hourglass, Facebook, Twitter, Instagram, Linkedin, Wifi, CreditCard, Clock, X
 } from 'lucide-react';
 
 const AllexFooter = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [service, setService] = useState('');
+  const [showTermsModal, setShowTermsModal] = useState(false); // State for the modal
   const footerRef = useRef(null);
   const isInView = useInView(footerRef, { once: true, amount: 0.2 });
 
@@ -67,29 +68,16 @@ const AllexFooter = () => {
   return (
     <motion.footer
       className="relative bg-black text-neutral-400 py-12 overflow-hidden"
-      style={{ background: '#1d212a' }} // Updated base color
+      style={{ background: '#1d212a' }}
       ref={footerRef}
       variants={containerVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
     >
-      {/* Dynamic background layers (mimicking the hero section from your image) */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Main background gradient, subtle and dark */}
-        <div className="absolute inset-0 bg-gradient-to-br" style={{ background: 'linear-gradient(to bottom right, #21242c, #1d212a, #2c3e50)' }}></div>
+      {/* Dynamic background gradient layer - kept for design */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br" style={{ background: 'linear-gradient(to bottom right, #21242c, #1d212a, #2c3e50)' }}></div>
 
-        {/* Dynamic, shadowy particle layer (blobs) */}
-        <div className="absolute inset-0 background-blobs-container animate-blob-group-move-footer">
-          <div className="background-blob blob-sf-1" style={{ background: 'rgba(255, 215, 0, 0.9)' }}></div> {/* Gold */}
-          <div className="background-blob blob-sf-2" style={{ background: 'rgba(255, 165, 0, 0.9)' }}></div> {/* Orange */}
-          <div className="background-blob blob-sf-3" style={{ background: 'rgba(52, 152, 219, 0.9)' }}></div> {/* Blue */}
-        </div>
-
-        {/* Subtle, moving diagonal lines/texture */}
-        <div className="absolute inset-0 background-lines-animation-footer opacity-5"></div>
-      </div>
-
-      {/* Newsletter Form Section (Full-width row) */}
+      {/* Newsletter Form Section */}
       <div className="container mx-auto px-4 relative z-10 mb-12">
         <motion.div variants={itemVariants}>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -121,7 +109,7 @@ const AllexFooter = () => {
                 <span className="text-neutral-300 ml-2">Rated 4.9 Stars on Google</span>
               </motion.div>
               <motion.a
-                href="#"
+                href="https://share.google/yNa1fgnHUrB3cKOpP"
                 className="text-sm underline hover:no-underline transition-all duration-300"
                 style={{ color: '#FFD700' }}
                 variants={itemVariants}
@@ -190,7 +178,7 @@ const AllexFooter = () => {
               whileHover={{ scale: 1.3, rotate: 360, transition: { duration: 0.2 } }}
               aria-label="Facebook"
             >
-              <Facebook strokeWidth={1.5}/>
+              <Facebook strokeWidth={1.5} />
             </motion.a>
             <motion.a
               href="#"
@@ -198,7 +186,7 @@ const AllexFooter = () => {
               whileHover={{ scale: 1.3, rotate: 360, transition: { duration: 0.2 } }}
               aria-label="Twitter"
             >
-              <Twitter strokeWidth={1.5}/>
+              <Twitter strokeWidth={1.5} />
             </motion.a>
             <motion.a
               href="#"
@@ -206,7 +194,7 @@ const AllexFooter = () => {
               whileHover={{ scale: 1.3, rotate: 360, transition: { duration: 0.2 } }}
               aria-label="Instagram"
             >
-              <Instagram strokeWidth={1.5}/>
+              <Instagram strokeWidth={1.5} />
             </motion.a>
             <motion.a
               href="#"
@@ -214,7 +202,7 @@ const AllexFooter = () => {
               whileHover={{ scale: 1.3, rotate: 360, transition: { duration: 0.2 } }}
               aria-label="LinkedIn"
             >
-              <Linkedin strokeWidth={1.5}/>
+              <Linkedin strokeWidth={1.5} />
             </motion.a>
           </div>
           <motion.a
@@ -285,7 +273,16 @@ const AllexFooter = () => {
               <a href="#" className="hover:text-[#FFD700] transition-colors">Book Now</a>
             </motion.li>
             <motion.li whileHover={{ scale: 1.05, originX: 0, transition: { duration: 0.1 } }}>
-              <a href="#" className="hover:text-[#FFD700] transition-colors">Terms & Conditions</a>
+              <a
+                href="#"
+                className="hover:text-[#FFD700] transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowTermsModal(true);
+                }}
+              >
+                Terms & Conditions
+              </a>
             </motion.li>
           </ul>
         </motion.div>
@@ -337,94 +334,66 @@ const AllexFooter = () => {
               textShadow: "0 0 10px rgba(255, 215, 0, 0.8)",
               scale: 1.02
             }}
+            onClick={(e) => {
+              e.preventDefault();
+              setShowTermsModal(true);
+            }}
           >
             Terms & Conditions
           </motion.a>
         </div>
       </div>
 
+      {/* Terms & Conditions Modal */}
+      {showTermsModal && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowTermsModal(false)} // Close modal when clicking outside
+        >
+          <motion.div
+            className="relative w-full max-w-xl max-h-[80vh] bg-white/70 rounded-lg p-6 md:p-8 shadow-xl overflow-y-auto"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+            initial={{ scale: 0.9, y: 50 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 50 }}
+          >
+            <button
+              onClick={() => setShowTermsModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full text-white bg-black/50 hover:bg-black/80 transition-colors"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">
+              Terms & Conditions
+            </h2>
+            <div className="text-gray-800 text-sm leading-relaxed space-y-4">
+              <p>Welcome to Allex Gents Parlour. By accessing and using our website and services, you agree to be bound by the following terms and conditions. These terms govern your access to and use of our website, including any content, functionality, and services offered on or through the site.</p>
+              
+              <h3 className="text-lg font-semibold text-gray-900">1. Services and Appointments</h3>
+              <p>All services are subject to availability. We reserve the right to refuse service to any person for any reason at any time. Appointments can be booked through our website, mobile application, or by phone. Cancellation policies apply and will be communicated at the time of booking.</p>
+
+              <h3 className="text-lg font-semibold text-gray-900">2. User Conduct</h3>
+              <p>You agree not to use our website in any way that causes, or may cause, damage to the website or impairment of the availability or accessibility of the website. You must not use our website to copy, store, host, transmit, send, use, publish or distribute any material which consists of (or is linked to) any spyware, computer virus, Trojan horse, worm, or other malicious computer software.</p>
+
+              <h3 className="text-lg font-semibold text-gray-900">3. Intellectual Property</h3>
+              <p>The content, design, and all other materials on this website are owned by Allex Gents Parlour or its licensors and are protected by copyright laws. You may not reproduce, duplicate, copy, or otherwise exploit our material for any commercial purpose without our express written consent.</p>
+
+              <h3 className="text-lg font-semibold text-gray-900">4. Limitation of Liability</h3>
+              <p>Allex Gents Parlour will not be liable for any direct, indirect, special, incidental, or consequential damages arising out of the use or inability to use the services or products on this website.</p>
+
+              <h3 className="text-lg font-semibold text-gray-900">5. Changes to Terms</h3>
+              <p>We reserve the right to modify these terms and conditions at any time. Your continued use of the website after any such changes constitutes your acceptance of the new terms. We encourage you to review this page periodically for any updates.</p>
+              
+              <p className="mt-6 text-sm text-neutral-600">This is a general template. For professional and legal purposes, please consult with a legal professional to draft your specific terms and conditions.</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
       <style>{`
-        .background-blobs-container {
-            width: 300%;
-            height: 300%;
-            top: -100%;
-            left: -100%;
-            position: absolute;
-            filter: blur(30px);
-        }
-
-        .background-blob {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.55;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
-            animation-timing-function: ease-in-out;
-            box-shadow: 0 0 100px rgba(255,215,0,0.6);
-        }
-
-        .blob-sf-1 {
-            width: 650px; height: 650px;
-            top: 10%; left: -5%;
-            animation: blob-move-sf-1 30s ease-in-out infinite alternate;
-        }
-        .blob-sf-2 {
-            width: 750px; height: 750px;
-            bottom: 0%; right: -10%;
-            animation: blob-move-sf-2 40s ease-in-out infinite alternate;
-        }
-        .blob-sf-3 {
-            width: 600px; height: 600px;
-            top: 70%; left: 20%;
-            animation: blob-move-sf-3 25s ease-in-out infinite alternate;
-        }
-
-        @keyframes blob-move-sf-1 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(700px, 750px) scale(1.4); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes blob-move-sf-2 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-750px, -680px) scale(1.35); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes blob-move-sf-3 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(680px, -720px) scale(0.65); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-
-        @keyframes animate-blob-group-move-footer {
-            0% { transform: translate(-80%, -80%); }
-            25% { transform: translate(40%, -75%); }
-            50% { transform: translate(-75%, 80%); }
-            75% { transform: translate(80%, -40%); }
-            100% { transform: translate(-80%, -80%); }
-        }
-        .animate-blob-group-move-footer {
-            animation: animate-blob-group-move-footer 120s linear infinite;
-        }
-
-        .background-lines-animation-footer {
-            background-image: repeating-linear-gradient(45deg,
-                rgba(255,255,255,0.3) 0px,
-                rgba(255,255,255,0.3) 2px,
-                transparent 2px,
-                transparent 50px
-            );
-            background-size: 100px 100px;
-            animation: lines-pan-footer 40s linear infinite;
-        }
-
-        @keyframes lines-pan-footer {
-            0% { background-position: 0 0; }
-            25% { background-position: 2000px 600px; }
-            50% { background-position: 1000px 2000px; }
-            75% { background-position: -600px 1000px; }
-            100% { background-position: 0 0; }
-        }
-
         .nav-link-underline-footer {
           display: inline-flex;
           position: relative;

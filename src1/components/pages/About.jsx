@@ -1,19 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useRef, memo } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { CheckCircle, HeartHandshake, ShieldCheck, Sparkles, User, Medal } from 'lucide-react';
+import { CheckCircle, HeartHandshake, ShieldCheck, Sparkles, Medal } from 'lucide-react';
 import ParticleEffect from '../ui/ParticleEffect';
 import AnimatedCounter from '../ui/AnimatedCounter';
 import StillHaveQuestion from '../ui/StillHaveQuestion';
 import OurPromise from '../ui/OurPromise';
 import Testimonials from '../ui/Testimonial'
 
-// A reusable component with a solid background and a powerful parallax effect
-const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, overlayTexts }) => {
+// Reusable component with a solid background and a powerful parallax effect
+const ImageContentSection = memo(({ title, description, imageUrl, isImageOnRight, overlayTexts }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
   const y = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
   const containerVariants = {
@@ -44,19 +42,7 @@ const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, ove
     }
   };
 
-  const overlayHoverVariants = {
-    hover: {
-      scale: 1.1,
-      y: -5,
-      boxShadow: "0px 10px 20px rgba(255,165,0,0.2)",
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10
-      }
-    }
-  }
-
+  // Variants for overlay texts on entrance
   const overlayChildVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -70,8 +56,6 @@ const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, ove
     })
   };
 
-  
-
   return (
     <motion.div
       ref={ref}
@@ -81,34 +65,28 @@ const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, ove
       variants={containerVariants}
     >
       <div className="absolute inset-0 z-0 bg-black/80"></div>
-      
+
       <motion.div
         variants={imageVariants}
         className="md:w-1/2 rounded-2xl overflow-hidden z-10 relative"
       >
-        <motion.img
+        <img
           src={imageUrl}
           alt={title}
-          className="w-full h-full object-cover rounded-2xl"
+          className="w-full h-full object-cover rounded-2xl transition-all duration-500 hover:scale-[1.1]"
           style={{
             boxShadow: "0 0 10px rgba(255, 165, 0, 0.7)"
           }}
-          whileHover={{
-            scale: 1.1,
-            transition: { duration: 0.5 }
-          }}
-          transition={{ duration: 0.5 }}
         />
 
         {overlayTexts && overlayTexts.map((text, index) => (
           <motion.div
             key={index}
-            className={`absolute px-4 py-2 bg-black/40 backdrop-blur-sm text-white rounded-md text-sm font-semibold cursor-pointer`}
+            className={`absolute px-4 py-2 bg-black/40 backdrop-blur-sm text-white rounded-md text-sm font-semibold cursor-pointer transition-all duration-300 hover:scale-[1.1] hover:translate-y-[-5px] hover:shadow-[0_10px_20px_rgba(255,165,0,0.2)]`}
             initial="hidden"
             animate="visible"
             custom={index}
             variants={overlayChildVariants}
-            whileHover="hover"
             style={{
               top: text.position.top,
               bottom: text.position.bottom,
@@ -131,10 +109,10 @@ const ImageContentSection = ({ title, description, imageUrl, isImageOnRight, ove
       </motion.div>
     </motion.div>
   );
-};
+});
 
 // Hero section with centered text and animated overlays
-const HeroAbout = () => {
+const HeroAbout = memo(() => {
   return (
     <section className="relative py-28 bg-[#1a1c24] text-white overflow-hidden h-[60vh] flex items-center justify-center">
       <div className="absolute inset-0">
@@ -186,12 +164,10 @@ const HeroAbout = () => {
       </motion.div>
     </section>
   );
-};
-
-
+});
 
 // Our Story section with a new theme
-const OurStory = () => {
+const OurStory = memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
   const variants = {
@@ -202,15 +178,10 @@ const OurStory = () => {
   return (
     <motion.section
       ref={ref}
-      className="bg-white py-20 px-6 text-center max-w-4xl mx-auto rounded-3xl shadow-2xl border border-gray-100 -mt-20 z-20 relative"
+      className="bg-white py-20 px-6 text-center max-w-4xl mx-auto rounded-3xl shadow-2xl border border-gray-100 -mt-20 z-20 relative transition-all duration-300 transform-gpu hover:scale-[1.02] hover:shadow-[0_30px_60px_rgba(0,0,0,0.2),_0_0_20px_rgba(255,165,0,0.3)]"
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       variants={variants}
-      whileHover={{
-        boxShadow: "0 30px 60px rgba(0,0,0,0.2), 0 0 20px rgba(255,165,0,0.3)",
-        scale: 1.02
-      }}
-      transition={{ duration: 0.3 }}
     >
       <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-pink-500 bg-clip-text text-transparent">Our Story</h2>
       <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -218,10 +189,10 @@ const OurStory = () => {
       </p>
     </motion.section>
   );
-};
+});
 
 // Services section with hover animations
-const AboutServices = () => {
+const AboutServices = memo(() => {
   const services = [
     { title: "Hair Mastery", desc: "Signature cuts, styling & grooming with a modern twist.", icon: Sparkles, color: 'blue', hoverBg: 'bg-blue-50', hoverBorder: 'border-blue-500' },
     { title: "Beard Sculpting", desc: "Crafted beards tailored to your face and personality.", icon: ShieldCheck, color: 'pink', hoverBg: 'bg-pink-50', hoverBorder: 'border-pink-500' },
@@ -252,17 +223,10 @@ const AboutServices = () => {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto z-10 relative">
         {services.map((s, i) => (
-          <motion.div
+          <div
             key={i}
-            className={`p-8 rounded-xl shadow-xl text-center border border-gray-200 transition-all duration-300 transform-gpu relative group`}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            whileHover={{
-                scale: 1.05,
-                boxShadow: "0 25px 50px rgba(0,0,0,0.1), 0 0 15px rgba(0,0,0,0.2)"
-            }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            viewport={{ once: true }}
+            className={`p-8 rounded-xl shadow-xl text-center border border-gray-200 transition-all duration-300 transform-gpu relative group
+                hover:scale-[1.05] hover:shadow-[0_25px_50px_rgba(0,0,0,0.1),_0_0_15px_rgba(0,0,0,0.2)]`}
           >
             <div className="relative z-10">
               <s.icon className={`w-10 h-10 mx-auto mb-4 text-${s.color}-500`} />
@@ -270,35 +234,19 @@ const AboutServices = () => {
               <p className="text-gray-500 text-sm">{s.desc}</p>
             </div>
             {/* Animated background and border on hover */}
-            <motion.div
-              className={`absolute inset-0 rounded-xl transition-all duration-300 ease-in-out z-0`}
-              initial={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
-              whileHover={{
-                backgroundColor: `var(--color-${s.color}-50)`,
-                borderColor: `var(--color-${s.color}-500)`
-              }}
-              transition={{ duration: 0.3 }}
-              style={{
-                '--color-blue-50': 'rgba(239, 246, 255, 1)',
-                '--color-blue-500': 'rgba(59, 130, 246, 1)',
-                '--color-pink-50': 'rgba(253, 242, 248, 1)',
-                '--color-pink-500': 'rgba(236, 72, 153, 1)',
-                '--color-green-50': 'rgba(236, 253, 245, 1)',
-                '--color-green-500': 'rgba(34, 197, 94, 1)',
-                '--color-orange-50': 'rgba(255, 247, 237, 1)',
-                '--color-orange-500': 'rgba(249, 115, 22, 1)',
-              }}
+            <div
+              className={`absolute inset-0 rounded-xl transition-all duration-300 ease-in-out z-0
+                group-hover:${s.hoverBg} group-hover:${s.hoverBorder}`}
             />
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>
   );
-};
-
+});
 
 // Team member card and section with hover and animation
-const TeamMemberCard = ({ name, role, photoUrl, description }) => {
+const TeamMemberCard = memo(({ name, role, photoUrl, description }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
   const cardVariants = {
@@ -306,35 +254,19 @@ const TeamMemberCard = ({ name, role, photoUrl, description }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
   };
 
-  const imageVariants = {
-    hover: {
-      scale: 1.1,
-      filter: "grayscale(0%)",
-      transition: { duration: 0.4 }
-    }
-  };
+  const imageHoverClass = `w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.1] group-hover:filter-none`;
 
   return (
     <motion.div
       ref={ref}
-      className="relative p-6 rounded-xl text-center flex flex-col items-center transition-all duration-300 group overflow-hidden border border-gray-200"
+      className="relative p-6 rounded-xl text-center flex flex-col items-center transition-all duration-300 group overflow-hidden border border-gray-200 hover:scale-[1.05] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2),_0_0_20px_rgba(255,_165,_0,_0.4)]"
       variants={cardVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      whileHover={{
-        scale: 1.05,
-        boxShadow: "0 20px 40px rgba(0,0,0,0.2), 0 0 20px rgba(255, 165, 0, 0.4)",
-        transition: {
-          scale: { duration: 0.3 },
-          boxShadow: { duration: 0.3 }
-        }
-      }}
     >
       <motion.div
         className="absolute inset-0 z-0 border-4 rounded-xl"
-        style={{
-          borderImageSlice: 1
-        }}
+        style={{ borderImageSlice: 1 }}
         initial={{
           borderImageSource: 'linear-gradient(45deg, #f3f4f6, #f3f4f6)',
           opacity: 0,
@@ -351,26 +283,22 @@ const TeamMemberCard = ({ name, role, photoUrl, description }) => {
       />
       
       <div className="relative z-10 flex flex-col items-center">
-        <motion.div
-          className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-gray-200"
-          whileHover="hover"
-          variants={imageVariants}
-        >
+        <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-gray-200">
           <img
             src={photoUrl}
             alt={`Photo of ${name}`}
-            className="w-full h-full object-cover grayscale transition-all duration-300"
+            className={`${imageHoverClass} grayscale`}
           />
-        </motion.div>
+        </div>
         <h3 className="text-xl font-bold text-gray-900 mb-1">{name}</h3>
         <p className="text-sm font-semibold text-orange-500 mb-3">{role}</p>
         <p className="text-gray-600 text-sm">{description}</p>
       </div>
     </motion.div>
   );
-};
+});
 
-const OurTeam = () => {
+const OurTeam = memo(() => {
     const teamMembers = [
         {
           name: "Alex Smith",
@@ -425,10 +353,10 @@ const OurTeam = () => {
             </div>
         </section>
     );
-};
+});
 
 // Core Values section with parallax
-const CoreValues = () => {
+const CoreValues = memo(() => {
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
     const parallaxY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
@@ -451,37 +379,27 @@ const CoreValues = () => {
         </div>
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {values.map((val, i) => (
-            <motion.div
+            <div
               key={i}
-              className="text-center p-8 rounded-2xl bg-white shadow-xl relative overflow-hidden border border-gray-200"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 25px 50px rgba(0,0,0,0.1), 0 0 15px rgba(255,165,0,0.2)"
-              }}
+              className="text-center p-8 rounded-2xl bg-white shadow-xl relative overflow-hidden border border-gray-200 transition-all duration-300
+                hover:scale-[1.05] hover:shadow-[0_25px_50px_rgba(0,0,0,0.1),_0_0_15px_rgba(255,165,0,0.2)] group"
             >
-              <motion.div
-                className="absolute inset-0 bg-yellow-500/10 z-0"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileHover={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
+              <div
+                className="absolute inset-0 bg-yellow-500/10 z-0 transition-all duration-300 opacity-0 scale-[0.8] group-hover:opacity-100 group-hover:scale-[1]"
               />
               <div className="relative z-10">
                 <val.icon className="w-10 h-10 text-yellow-500 mb-4 mx-auto" />
                 <h3 className="text-xl font-semibold mb-2">{val.label}</h3>
                 <p className="text-gray-600">{val.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </motion.section>
     );
-};
+});
 
-const StatsCounter = () => (
+const StatsCounter = memo(() => (
     <section className="bg-[#1a1c24] text-white py-20">
       <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-12 text-center">
         <AnimatedCounter value={1000} label="Happy Clients" delay={0.2} />
@@ -489,7 +407,7 @@ const StatsCounter = () => (
         <AnimatedCounter value={500} label="Beards Perfected" delay={0.6} />
       </div>
     </section>
-);
+));
 
 const AboutPage = () => {
     const newImageUrl = "https://plus.unsplash.com/premium_photo-1661645788141-8196a45fb483?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFyYmVyfGVufDB8fDB8fHww";

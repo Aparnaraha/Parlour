@@ -4,7 +4,7 @@ import { Scissors, Sparkles, Check, HeartHandshake, Users, Star, Droplets, X } f
 import EnquiryFormModal from '../ui/EnquiryModalForm';
 
 // Main Services Component
-const OurServices = () => {
+const OurServices = React.memo(() => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleEnquiry = () => {
@@ -42,7 +42,7 @@ const OurServices = () => {
     const services = [
         {
             title: "Haircut & Styling",
-            category: "hair", // Added category for routing
+            category: "hair",
             icon: <Scissors className="w-4 h-4 mr-2 text-yellow-400" />,
             badge: "Sharp Styles",
             desc: "Our expert barbers deliver precision haircuts and modern styles tailored to your unique look. From classic cuts to the latest trends, we'll make sure you look your best.",
@@ -51,7 +51,7 @@ const OurServices = () => {
         },
         {
             title: "Facial & Clean-up",
-            category: "skin", // Added category for routing
+            category: "skin",
             icon: <Sparkles className="w-4 h-4 mr-2 text-[#3498db]" />,
             badge: "Relaxing Treatments",
             desc: "Revitalize your skin with our professional facials and clean-up services. We use high-quality products to cleanse, exfoliate, and hydrate your skin for a fresh, healthy glow.",
@@ -60,7 +60,7 @@ const OurServices = () => {
         },
         {
             title: "Beard Grooming",
-            category: "hair", // Added category for routing
+            category: "hair",
             icon: <HeartHandshake className="w-4 h-4 mr-2 text-blue-500" />,
             badge: "Perfect Grooming",
             desc: "Tame your mane with our specialized beard grooming services. We offer professional trimming, shaping, and conditioning to keep your beard looking sharp and well-maintained.",
@@ -68,17 +68,17 @@ const OurServices = () => {
             imgSrc: "https://cache3.youla.io/files/images/780_780/5c/ed/5ced25e102a558529a50b377.jpg",
         },
         {
-            title: "Hair & Scalp Treatment", // New service title
-            category: "hair", // Added category
-            icon: <Droplets className="w-4 h-4 mr-2 text-[#3498db]" />, // New icon
+            title: "Hair & Scalp Treatment",
+            category: "hair",
+            icon: <Droplets className="w-4 h-4 mr-2 text-[#3498db]" />,
             badge: "Healthy Hair",
             desc: "Strengthen and nourish your hair from root to tip. Our treatments combat issues like dandruff, hair fall, and dryness, restoring vitality and shine.",
-            features: ["Anti-dandruff therapy", "Hair spa and massage", "Keratin treatment", "Hair growth stimulation"], // Updated features
-            imgSrc: "https://avatars.mds.yandex.net/get-ydo/11397567/2a0000018bf3fef914467833c98fc941e7da/diploma", // A more relevant image
+            features: ["Anti-dandruff therapy", "Hair spa and massage", "Keratin treatment", "Hair growth stimulation"],
+            imgSrc: "https://avatars.mds.yandex.net/get-ydo/11397567/2a0000018bf3fef914467833c98fc941e7da/diploma",
         },
         {
             title: "Groom's Makeup",
-            category: "makeup", // Added category for routing
+            category: "makeup",
             icon: <Users className="w-4 h-4 mr-2 text-blue-500" />,
             badge: "Wedding Ready",
             desc: "Prepare for your big day with our professional groom's makeup services. Our artists use subtle techniques to even out skin tone and ensure you look picture-perfect.",
@@ -87,7 +87,7 @@ const OurServices = () => {
         },
         {
             title: "Special Occasion Makeup",
-            category: "makeup", // Added category for routing
+            category: "makeup",
             icon: <Star className="w-4 h-4 mr-2 text-[#3498db]" />,
             badge: "Event Ready",
             desc: "Look your best for any special event with our professional makeup services. We'll enhance your features to give you a natural and confident look for any occasion.",
@@ -118,7 +118,7 @@ const OurServices = () => {
                     </h1>
                     <div className="h-1 w-32 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full mb-4"></div>
                     <p className="text-base md:text-lg max-w-2xl mx-auto opacity-90">
-                        Discover our wide range of professional grooming services, from a fresh haircut 
+                        Discover our wide range of professional grooming services, from a fresh haircut
                         to a rejuvenating facial, designed to help you look and feel your best.
                     </p>
                 </motion.div>
@@ -185,7 +185,7 @@ const OurServices = () => {
 
                             {/* Service Image */}
                             <motion.div
-                                className="relative flex-1 w-full lg:w-auto p-4 lg:p-6 rounded-[32px] shadow-xl backdrop-blur-sm"
+                                className="relative flex-none w-full lg:w-126 h-92 p-4 lg:p-6 rounded-2xl shadow-xl backdrop-blur-sm"
                                 style={{ boxShadow: "0px 0px 50px rgba(0,0,0,0.5)" }}
                                 variants={index % 2 === 0 ? imageVariants : textVariants}
                                 whileHover={{ scale: 1.02 }}
@@ -193,7 +193,8 @@ const OurServices = () => {
                                 <img
                                     src={service.imgSrc}
                                     alt={service.title}
-                                    className="w-full h-auto rounded-3xl"
+                                    className="w-full h-full object-cover rounded-2xl"
+                                    loading="lazy"
                                 />
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.8 }}
@@ -226,6 +227,6 @@ const OurServices = () => {
             
         </div>
     );
-};
+});
 
 export default OurServices;

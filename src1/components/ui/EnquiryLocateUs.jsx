@@ -1,38 +1,110 @@
-import React, { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useState, useEffect, useCallback, memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Clock, CheckCircle, Info } from "lucide-react";
 
-const Enquiry = () => {
-  const [toast, setToast] = useState(false);
+// --- Static data and motion variants moved outside the component for performance ---
+const contactItems = [
+  {
+    icon: <Phone className="w-6 h-6 text-yellow-500" />,
+    title: "Call Us",
+    content: "+91 98765 43210\n+91 91234 56789",
+  },
+  {
+    icon: <MapPin className="w-6 h-6 text-yellow-500" />,
+    title: "Visit Us",
+    content: "751015, N3 Block, IRC Village,\nBhubaneswar, Odisha",
+  },
+  {
+    icon: <Clock className="w-6 h-6 text-yellow-500" />,
+    title: "Business Hours",
+    content: "Mon-Sat: 9:00 AM - 8:00 PM",
+  },
+];
 
-  const handleSubmit = (e) => {
+const whyChooseUsPoints = [
+  "Expert Stylists & Premium Products",
+  "Modern Grooming Experience",
+  "Transparent Pricing",
+  "Customer Satisfaction Guarantee",
+];
+
+const headingVariants = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
+const formVariants = {
+  initial: { opacity: 0, x: -50 },
+  whileInView: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const infoVariants = {
+  initial: { opacity: 0, x: 50 },
+  whileInView: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const mapVariants = {
+  initial: { opacity: 0, scale: 0.9 },
+  whileInView: { opacity: 1, scale: 1, transition: { duration: 1 } },
+};
+
+const textOverlayVariants = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
+
+const toastVariants = {
+  initial: { opacity: 0, y: -30 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -30 },
+};
+
+const smallToastVariants = {
+  initial: { opacity: 0, x: 100 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+// --- Component memoized for performance ---
+const Enquiry = memo(() => {
+  const [formToast, setFormToast] = useState(false);
+  const [mapToast, setMapToast] = useState(false);
+
+  // Use useCallback to memoize the function
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    setToast(true);
-    setTimeout(() => setToast(false), 3000); // Auto-hide after 3s
-  };
-  // const { scrollY } = useScroll();
-  // const yParallax = useTransform(scrollY, [0, 500], [0, 100]); // map parallax
-
-  const [showToast, setShowToast] = useState(false);
+    setFormToast(true);
+  }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowToast(true), 800);
-    return () => clearTimeout(timer);
+    if (formToast) {
+      const timer = setTimeout(() => {
+        setFormToast(false);
+      }, 3000);
+      return () => clearTimeout(timer); // Cleanup timer on unmount
+    }
+  }, [formToast]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMapToast(true), 800);
+    return () => clearTimeout(timer); // Cleanup timer on unmount
   }, []);
 
   return (
     <div className="bg-gradient-to-b from-white via-yellow-50 to-orange-50 font-['Inter',sans-serif]">
       {/* Toast Notification */}
-      {toast && (
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -30 }}
-          className="fixed top-6 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg"
-        >
-          ✅ Message sent successfully!
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {formToast && (
+          <motion.div
+            className="fixed top-6 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg"
+            variants={toastVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            ✅ Message sent successfully!
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Contact Section */}
       <section className="relative py-20 md:py-24">
@@ -42,9 +114,8 @@ const Enquiry = () => {
         <div className="relative max-w-7xl mx-auto px-6">
           {/* Heading */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={headingVariants}
+            whileInView="whileInView"
             viewport={{ once: true }}
             className="text-center mb-16"
           >
@@ -68,9 +139,8 @@ const Enquiry = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
             {/* LEFT - Enquiry Form */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              variants={formVariants}
+              whileInView="whileInView"
               viewport={{ once: true }}
               className="flex flex-col bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl hover:shadow-2xl border border-yellow-400/30 p-8 relative"
             >
@@ -124,31 +194,13 @@ const Enquiry = () => {
 
             {/* RIGHT - Contact Info */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              variants={infoVariants}
+              whileInView="whileInView"
               viewport={{ once: true }}
               className="flex flex-col justify-between bg-white/70 backdrop-blur-lg rounded-2xl border border-yellow-400/30 shadow-xl hover:shadow-2xl p-8"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
-                {[
-                  {
-                    icon: <Phone className="w-6 h-6 text-yellow-500" />,
-                    title: "Call Us",
-                    content: "+91 98765 43210\n+91 91234 56789",
-                  },
-                  {
-                    icon: <MapPin className="w-6 h-6 text-yellow-500" />,
-                    title: "Visit Us",
-                    content:
-                      "751015, N3 Block, IRC Village,\nBhubaneswar, Odisha",
-                  },
-                  {
-                    icon: <Clock className="w-6 h-6 text-yellow-500" />,
-                    title: "Business Hours",
-                    content: "Mon-Sat: 9:00 AM - 8:00 PM",
-                  },
-                ].map((item, i) => (
+                {contactItems.map((item, i) => (
                   <motion.div
                     key={i}
                     whileHover={{ scale: 1.05, y: -5 }}
@@ -173,12 +225,7 @@ const Enquiry = () => {
               >
                 <h4 className="text-xl font-semibold mb-4">Why Choose Us?</h4>
                 <ul className="space-y-3">
-                  {[
-                    "Expert Stylists & Premium Products",
-                    "Modern Grooming Experience",
-                    "Transparent Pricing",
-                    "Customer Satisfaction Guarantee",
-                  ].map((point, i) => (
+                  {whyChooseUsPoints.map((point, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5" />
                       <span>{point}</span>
@@ -194,9 +241,8 @@ const Enquiry = () => {
       {/* MAP SECTION */}
       <section className="relative h-[400px] md:h-[500px] overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
+          variants={mapVariants}
+          whileInView="whileInView"
           viewport={{ once: true }}
           className="absolute inset-0"
         >
@@ -216,9 +262,8 @@ const Enquiry = () => {
 
         {/* Text Overlay */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          variants={textOverlayVariants}
+          whileInView="whileInView"
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-6 py-4 rounded-xl shadow-lg text-center max-w-lg"
         >
           <h3 className="text-2xl font-bold">Allex Gents Parlour</h3>
@@ -227,22 +272,24 @@ const Enquiry = () => {
           </p>
         </motion.div>
         {/* Toast Notification */}
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md shadow-xl rounded-xl px-5 py-3 flex items-center gap-3 border border-yellow-400/30"
-          >
-            <Info className="w-6 h-6 text-orange-500" />
-            <span className="text-gray-800 font-medium">
-              You’re viewing our location live on Google Maps.
-            </span>
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {mapToast && (
+            <motion.div
+              className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md shadow-xl rounded-xl px-5 py-3 flex items-center gap-3 border border-yellow-400/30"
+              variants={smallToastVariants}
+              initial="initial"
+              animate="animate"
+            >
+              <Info className="w-6 h-6 text-orange-500" />
+              <span className="text-gray-800 font-medium">
+                You’re viewing our location live on Google Maps.
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
     </div>
   );
-};
+});
 
 export default Enquiry;

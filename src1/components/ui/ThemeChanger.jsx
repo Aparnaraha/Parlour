@@ -1,8 +1,7 @@
 "use client";
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 
 /**
  * A reusable button component to toggle between light and dark themes.

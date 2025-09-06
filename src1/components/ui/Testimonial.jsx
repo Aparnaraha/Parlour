@@ -1,17 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
-// Optional: stars (Font Awesome)
-const FontAwesome = () => (
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    crossOrigin="anonymous"
-    referrerPolicy="no-referrer"
-  />
-);
+// Note: To prevent performance issues, it's best practice to add Font Awesome CSS
+// to your main HTML file (e.g., public/index.html) or a global CSS file.
+// Example:
+// <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 const testimonials = [
   {
@@ -48,34 +43,32 @@ const testimonials = [
   },
 ];
 
-const TestimonialSection = () => {
+const TestimonialSection = memo(() => {
   const handleReviewClick = () => {
     window.open("https://share.google/kAcan8A0nWy0aQZTp", "_blank");
   };
 
   return (
     <section className="bg-[#1d212a] py-16 px-4 md:px-8 font-['Inter',sans-serif]">
-      <FontAwesome />
-
       {/* Gradient border utility (thin, always visible, no bleed) */}
       <style>{`
         .gradient-ring {
           position: relative;
-          overflow: hidden; /* keeps the border within rounded corners */
-          border-radius: 0.75rem; /* match rounded-xl */
+          overflow: hidden;
+          border-radius: 0.75rem;
         }
         .gradient-ring::before {
           content: "";
           position: absolute;
           inset: 0;
           border-radius: inherit;
-          padding: 1px; /* thin border */
+          padding: 1px;
           background: linear-gradient(90deg, #facc15, #fb923c);
           -webkit-mask:
             linear-gradient(#000 0 0) content-box,
             linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
-                  mask-composite: exclude; /* show only the border area */
+          mask-composite: exclude;
           pointer-events: none;
         }
       `}</style>
@@ -98,7 +91,7 @@ const TestimonialSection = () => {
         {/* Swiper Row (no column issues) */}
         <Swiper
           modules={[Autoplay]}
-          spaceBetween={8}               // tight gaps; no gradient bleed
+          spaceBetween={8}
           slidesPerView={1.2}
           breakpoints={{
             640: { slidesPerView: 1.6 },
@@ -107,7 +100,7 @@ const TestimonialSection = () => {
           }}
           loop
           autoplay={{ delay: 0, disableOnInteraction: false }}
-          speed={3800}                  // smooth train effect
+          speed={3800}
           className="pb-6"
         >
           {testimonials.map((t, idx) => (
@@ -175,6 +168,6 @@ const TestimonialSection = () => {
       </div>
     </section>
   );
-};
+});
 
 export default TestimonialSection;

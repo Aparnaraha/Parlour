@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Data for the services dropdown in the form
@@ -18,21 +18,24 @@ const serviceOptions = [
  * @param {boolean} props.isOpen - Controls the visibility of the modal.
  * @param {function} props.onClose - A function to call when the modal needs to be closed.
  */
-const EnquiryFormModal = ({ isOpen, onClose }) => {
+const EnquiryFormModal = memo(({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({ name: '', phone: '', service: '', message: '' });
 
-    const handleInputChange = (e) => {
+    // Use useCallback to memoize this function
+    const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    }, []);
 
-    const handleClose = () => {
+    // Use useCallback to memoize this function
+    const handleClose = useCallback(() => {
         // Reset form data and close the modal
         setFormData({ name: '', phone: '', service: '', message: '' });
         onClose();
-    };
+    }, [onClose]);
 
-    const handleSubmit = (e) => {
+    // Use useCallback to memoize this function
+    const handleSubmit = useCallback((e) => {
         e.preventDefault();
         const { name, phone, service, message } = formData;
         
@@ -44,7 +47,7 @@ const EnquiryFormModal = ({ isOpen, onClose }) => {
         
         window.open(whatsappUrl, '_blank');
         handleClose();
-    };
+    }, [formData, handleClose]);
     
     // Gradient style for the button and text
     const GRADIENT = 'linear-gradient(90deg, #FFD700 0%, #FF9800 100%)';
@@ -159,6 +162,6 @@ const EnquiryFormModal = ({ isOpen, onClose }) => {
             )}
         </AnimatePresence>
     );
-};
+});
 
 export default EnquiryFormModal;

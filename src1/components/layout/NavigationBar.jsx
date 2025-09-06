@@ -80,7 +80,34 @@ const itemVariants = {
     },
 };
 
-
+// =========================================================================
+// Memoized Link Component to prevent unnecessary re-renders
+// =========================================================================
+const NavLink = React.memo(({ link, location, onClick }) => {
+    const isActive = location.pathname === link.path;
+    return (
+        <Link
+            key={link.path}
+            to={link.path}
+            onClick={onClick}
+            className={`relative group inline-flex items-center pb-1.5 font-medium cursor-pointer transition-all duration-300 ${
+                isActive ? "text-[#FFD700]" : TEXT_COLOR
+            }`}
+        >
+            <motion.span
+                className={`relative z-10 ${HOVER_GRADIENT_TEXT}`}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                {link.name}
+            </motion.span>
+            <span
+                className="absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                style={{ background: GRADIENT }}
+            ></span>
+        </Link>
+    );
+});
 
 // =========================================================================
 // Main NavigationBar Component
@@ -95,8 +122,8 @@ const NavigationBar = () => {
 
     const navLinks = [
         { name: "Home", path: "/" },
-        { name: "Gallery", path: "/gallery" },
         { name: "About Us", path: "/about" },
+        { name: "Gallery", path: "/gallery" },
         { name: "Contact", path: "/contact" },
         { name: "FAQ", path: "/faq" },
     ];
@@ -134,27 +161,35 @@ const NavigationBar = () => {
         setIsModalOpen(true);
     }, [buttonControls]);
 
-    const CtaButton = () => (
+    const handleLinkClick = useCallback(() => {
+        setIsMenuOpen(false);
+        setIsServicesDropdownOpen(false);
+    }, []);
+
+    // A reusable CTA button component to avoid code duplication
+    const CtaButton = ({ mobile, onClick }) => (
         <motion.button
-            onClick={handleEnquiryClick}
-            className={`cta-btn hidden lg:flex items-center px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-lg text-white`}
+            onClick={onClick}
+            className={`${mobile ? 'px-3 py-1 text-xs' : 'px-6 py-2'} cta-btn items-center rounded-full font-semibold transition-all duration-300 shadow-lg text-white`}
             whileHover={{ scale: 1.05, background: GRADIENT, color: '#1d212a' }}
             whileTap={{ scale: 0.95 }}
             style={{ backgroundColor: BACKGROUND_COLOR }}
-            animate={buttonControls}
+            animate={mobile ? {} : buttonControls} // Only animate desktop button
         >
             Enquire Now
-            <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <motion.path
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-            </svg>
+            {!mobile && (
+                <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <motion.path
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                </svg>
+            )}
         </motion.button>
     );
 
@@ -173,6 +208,7 @@ const NavigationBar = () => {
             >
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
+                        {/* Logo */}
                         <Link to="/" className="flex items-center">
                             <motion.div
                                 animate={{ height: isScrolled ? '3.5rem' : '4.5rem' }}
@@ -189,6 +225,8 @@ const NavigationBar = () => {
                             </motion.div>
                         </Link>
 
+
+                        {/* Desktop Navigation Links */}
                         <div className="hidden lg:flex flex-1 justify-center items-center">
                             <div className="relative flex gap-10">
                                 {mainNavLinks.map((link) => {
@@ -239,7 +277,7 @@ const NavigationBar = () => {
                                                                 <motion.div key={subLink.path} variants={itemVariants}>
                                                                     <Link
                                                                         to={subLink.path}
-                                                                        className="flex items-center space-x-2 px-4 py-2 text-sm text-[#e0e0e0] hover:bg-gray-700 transition-all duration-200 group"
+                                                                        className="flex items-center space-x-2 px-4 py-2 text-sm text-[#e0e0e0] hover:bg-gray-700 transition-colors duration-200 group"
                                                                         onClick={() => setIsServicesDropdownOpen(false)}
                                                                     >
                                                                         <subLink.icon className="h-5 w-5 text-gray-400 group-hover:bg-gradient-to-r group-hover:from-[#FF9800] group-hover:to-[#FFD700] group-hover:text-transparent group-hover:bg-clip-text transition-colors duration-200" />
@@ -255,33 +293,15 @@ const NavigationBar = () => {
                                             </div>
                                         );
                                     }
-                                    const isActive = location.pathname === link.path;
-                                    return (
-                                        <Link
-                                            key={link.path}
-                                            to={link.path}
-                                            className={`relative group inline-flex items-center pb-1.5 font-medium cursor-pointer transition-all duration-300 ${
-                                                isActive ? "text-[#FFD700]" : TEXT_COLOR
-                                            }`}
-                                        >
-                                            <motion.span
-                                                className={`relative z-10 ${HOVER_GRADIENT_TEXT}`}
-                                                whileHover={{ y: -3 }}
-                                            >
-                                                {link.name}
-                                            </motion.span>
-                                            <span
-                                                className="absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-                                                style={{ background: GRADIENT }}
-                                            ></span>
-                                        </Link>
-                                    );
+                                    return <NavLink key={link.path} link={link} location={location} onClick={handleLinkClick} />;
                                 })}
                             </div>
                         </div>
 
-                        <CtaButton />
+                        {/* Desktop CTA Button, visible on larger screens */}
+                        <CtaButton onClick={handleEnquiryClick} />
 
+                        {/* Hamburger Menu Icon for mobile */}
                         <div className="lg:hidden flex items-center">
                             <button
                                 onClick={() => setIsMenuOpen((v) => !v)}
@@ -312,6 +332,7 @@ const NavigationBar = () => {
                     </div>
                 </div>
 
+                {/* Mobile Navigation Menu */}
                 <AnimatePresence>
                     {isMenuOpen && (
                         <motion.div
@@ -319,24 +340,13 @@ const NavigationBar = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.2 }}
-                            className="lg:hidden px-2 pt-2 pb-4 space-y-1 shadow-md"
+                            className="lg:hidden px-2 pt-2 pb-4 space-y-1 shadow-md z-40"
                             style={{ backgroundColor: BACKGROUND_COLOR }}
                         >
-                            <div className="py-2">
-                                <motion.button
-                                    onClick={() => { setIsMenuOpen(false); handleEnquiryClick(); }}
-                                    className={`w-full text-center px-4 py-2 rounded-full font-semibold transition-all duration-300 shadow-lg text-white`}
-                                    whileHover={{ scale: 1.05, background: GRADIENT, color: '#1d212a' }}
-                                    whileTap={{ scale: 0.95 }}
-                                    style={{ backgroundColor: BACKGROUND_COLOR }}
-                                >
-                                    Enquire Now
-                                </motion.button>
-                            </div>
                             <div className="relative">
                                 <button
                                     onClick={() => setIsServicesDropdownOpen(v => !v)}
-                                    className={`w-full text-left block px-3 py-2 rounded-md text-base font-medium flex items-center justify-between ${
+                                    className={`w-full text-left block px-3 py-2 rounded-md text-base font-medium flex items-center justify-between transition-all duration-300 ${
                                         location.pathname.startsWith('/services') ? "text-[#FFD700]" : TEXT_COLOR
                                     }`}
                                 >
@@ -357,13 +367,13 @@ const NavigationBar = () => {
                                             exit="closed"
                                             variants={menuVariants}
                                             style={{ originY: 0 }}
-                                            className="pl-6 pt-1 space-y-1 overflow-hidden"
+                                            className="pl-6 pt-1 space-y-1"
                                         >
                                             {serviceSubLinks.map((subLink) => (
                                                 <motion.div key={subLink.path} variants={itemVariants}>
                                                     <Link
                                                         to={subLink.path}
-                                                        onClick={() => { setIsMenuOpen(false); setIsServicesDropdownOpen(false); }}
+                                                        onClick={handleLinkClick}
                                                         className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-[#e0e0e0] hover:text-[#FFD700] transition-colors duration-200"
                                                     >
                                                         <subLink.icon className="h-5 w-5 text-gray-400 group-hover:bg-gradient-to-r group-hover:from-[#FF9800] group-hover:to-[#FFD700] group-hover:text-transparent group-hover:bg-clip-text transition-colors duration-200" />
@@ -381,10 +391,21 @@ const NavigationBar = () => {
                                     <Link
                                         key={link.path}
                                         to={link.path}
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className={`block px-3 py-2 rounded-md text-base font-medium ${isActive ? "text-[#FFD700]" : TEXT_COLOR}`}
+                                        onClick={handleLinkClick}
+                                        className={`relative group block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
+                                            isActive ? "text-[#FFD700]" : TEXT_COLOR
+                                        }`}
                                     >
-                                        {link.name}
+                                        <motion.span
+                                            className={`relative z-10 ${HOVER_GRADIENT_TEXT}`}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            {link.name}
+                                        </motion.span>
+                                        <span
+                                            className="absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                                            style={{ background: GRADIENT }}
+                                        ></span>
                                     </Link>
                                 );
                             })}
@@ -396,6 +417,9 @@ const NavigationBar = () => {
                     .cta-btn {
                         position: relative;
                         z-index: 1;
+                        display: flex; /* Make it a flex container to center text and icon */
+                        justify-content: center;
+                        align-items: center;
                     }
                     .cta-btn::before {
                         content: '';
@@ -415,10 +439,9 @@ const NavigationBar = () => {
                     }
                 `}</style>
             </motion.nav>
-            {/* The modal is rendered as a sibling and its fixed position will ensure it's always on top */}
             <EnquiryFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </>
     );
 };
 
-export default NavigationBar;
+export default React.memo(NavigationBar);
