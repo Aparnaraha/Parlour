@@ -51,7 +51,7 @@ const cardVariants = {
     transition: {
       duration: 0.35,
       ease: "easeOut",
-      delay: i * 0.28, // wave effect
+      delay: i * 0.12, // wave effect
     },
   }),
 };

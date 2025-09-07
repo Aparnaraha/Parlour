@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
-import { Eye, Play, Award, Trophy, Car, Gem, Crown, Sun, Moon, ArrowUp, X } from 'lucide-react';
+import { Eye, Play, Award, Trophy, Car, Gem, Crown, ArrowUp, X } from 'lucide-react';
 import React from 'react';
 
 // --- Lazy Load Components for Code Splitting ---
@@ -47,7 +47,7 @@ const shortVideos = [
     'https://www.youtube.com/shorts/MmJdbJy2wNY'
 ];
 
-// --- Reusable VideoPlayer Component (already optimized) ---
+// --- Reusable VideoPlayer Component ---
 const VideoPlayer = React.memo(({ videoUrl, isShorts }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     
@@ -114,22 +114,8 @@ const VideoPlayer = React.memo(({ videoUrl, isShorts }) => {
 });
 
 
-const ThemeChanger = React.memo(({ theme, toggleTheme }) => {
-    const isDark = useMemo(() => theme === 'dark', [theme]);
-    return (
-        <button
-            onClick={toggleTheme}
-            className={`fixed bottom-8 left-8 p-3 rounded-full shadow-lg z-50 transition-colors duration-300 ${
-                isDark ? 'bg-gray-800 text-yellow-500' : 'bg-white text-gray-900'
-            }`}
-        >
-            {isDark ? <Sun size={24} /> : <Moon size={24} />}
-        </button>
-    );
-});
-
-// --- Our Story Component ---
-const OurStory = React.memo(({ theme }) => {
+// --- Our Story Component with CSS Animations ---
+const OurStory = React.memo(() => {
     const storyPoints = useMemo(() => [
         { year: 2010, title: "Founded with a Vision", desc: "Our journey began with a single chair and a commitment to excellence.", icon: Crown },
         { year: 2014, title: "Expanded Services", desc: "We introduced new services, from advanced skincare to professional makeovers.", icon: Gem },
@@ -138,28 +124,86 @@ const OurStory = React.memo(({ theme }) => {
         { year: 2025, title: "Global Recognition", desc: "Featured in leading magazines, we are now a destination for beauty.", icon: Trophy },
     ], []);
 
-    const gradientClass = useMemo(() => theme === 'dark' ? 'from-yellow-500 to-orange-500' : 'from-yellow-400 to-orange-400', [theme]);
+    // Theme is now hardcoded
+    const theme = 'dark';
+    const gradientClass = 'from-yellow-500 to-orange-500';
+    
+    const itemRefs = useRef([]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-spring-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.2,
+            }
+        );
+
+        itemRefs.current.forEach((item) => {
+            if (item) {
+                observer.observe(item);
+            }
+        });
+
+        return () => {
+            itemRefs.current.forEach((item) => {
+                if (item) {
+                    observer.unobserve(item);
+                }
+            });
+        };
+    }, []);
 
     return (
-        <section className={`py-16 px-4 md:px-8 relative ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
+        <section className={`py-16 px-4 md:px-8 relative bg-gray-900`}>
+            <style jsx>{`
+                @keyframes springIn {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(40px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-spring-in {
+                    animation: springIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                }
+                .story-point {
+                    opacity: 0;
+                }
+                .story-point:nth-child(1) { animation-delay: 0.1s; }
+                .story-point:nth-child(2) { animation-delay: 0.2s; }
+                .story-point:nth-child(3) { animation-delay: 0.3s; }
+                .story-point:nth-child(4) { animation-delay: 0.4s; }
+                .story-point:nth-child(5) { animation-delay: 0.5s; }
+            `}</style>
             <div className="max-w-5xl mx-auto text-center">
                 <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
                     Our Journey
                 </span>
-                <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Our Story</h2>
-                <p className={`text-lg mb-12 ${theme === 'dark' ? 'text-black' : 'text-gray-900'}`}>A journey of passion, creativity, and dedication.</p>
+                <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-white`}>Our Story</h2>
+                <p className={`text-lg mb-12 text-gray-400`}>A journey of passion, creativity, and dedication.</p>
                 <div className="relative flex flex-col items-center">
                     <div className="absolute left-1/2 -ml-0.5 w-1 h-full bg-gradient-to-b from-yellow-500 via-orange-500 to-transparent z-0"></div>
                     {storyPoints.map((point, index) => (
                         <div
                             key={index}
-                            className={`flex flex-col md:flex-row items-center w-full my-8 relative z-10`}
+                            ref={el => (itemRefs.current[index] = el)}
+                            className={`story-point flex flex-col md:flex-row items-center w-full my-8 relative z-10`}
                         >
                             <div className={`md:w-1/2 md:pr-12 text-center md:text-right ${index % 2 !== 0 ? 'md:order-1 md:text-left md:pl-12' : ''}`}>
-                                <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{point.title}</h3>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{point.desc}</p>
+                                <h3 className={`text-2xl font-bold text-white`}>{point.title}</h3>
+                                <p className={`text-sm text-gray-400`}>{point.desc}</p>
                             </div>
-                            <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-gray-900 border-4 border-yellow-500">
+                            <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-900 border-4 border-yellow-500">
                                 <point.icon className="w-6 h-6 text-yellow-500" />
                             </div>
                             <div className={`md:w-1/2 md:pl-12 text-center md:text-left ${index % 2 !== 0 ? 'md:order-0 md:text-right md:pr-12' : ''}`}>
@@ -175,43 +219,18 @@ const OurStory = React.memo(({ theme }) => {
 
 
 const getColors = (sectionTheme) => {
-    return sectionTheme === 'dark' ? {
+    // Colors are now hardcoded for each section
+    return {
         bg: "bg-gray-950",
         text: "text-gray-200",
         secondaryText: "text-gray-400",
         primaryAccent: "text-yellow-400",
         button: "bg-yellow-500 hover:bg-yellow-600 text-white",
-    } : {
-        bg: "bg-white",
-        text: "text-gray-900",
-        secondaryText: "text-gray-600",
-        primaryAccent: "text-yellow-600",
-        button: "bg-yellow-500 hover:bg-yellow-600 text-white",
     };
 };
 
 const Gallery = () => {
-    const [theme, setTheme] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const storedTheme = localStorage.getItem('theme');
-            if (storedTheme) {
-                return storedTheme;
-            }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        return 'dark';
-    });
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('theme', theme);
-        }
-    }, [theme]);
-
-    const toggleTheme = useCallback(() => {
-        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-    }, []);
-
+    // The theme state is removed, and colors are set to 'dark' by default
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -222,11 +241,25 @@ const Gallery = () => {
     const closeVideoModal = useCallback(() => setSelectedVideo(null), []);
     const scrollToTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), []);
     
-    // Using a more robust, simple scroll check
-    useEffect(() => {
-        const handleScroll = () => {
-            setShowScrollTop(window.scrollY > 500);
+    // Debounce function to limit the rate of function calls
+    const debounce = (func, delay) => {
+        let timeout;
+        return (...args) => {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, delay);
         };
+    };
+
+    // Use a debounced handler for scroll events
+    useEffect(() => {
+        const handleScroll = debounce(() => {
+            setShowScrollTop(window.scrollY > 500);
+        }, 100);
+
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -238,7 +271,7 @@ const Gallery = () => {
     
     return (
         <div className={`min-h-screen font-sans overflow-x-hidden transition-colors duration-500 relative`}>
-            <ThemeChanger theme={theme} toggleTheme={toggleTheme} />
+            {/* The ThemeChanger component and its button are now removed */}
 
             {selectedImage && (
                 <div
@@ -292,7 +325,7 @@ const Gallery = () => {
 
             {/* Hero Section with Parallax */}
             <section
-                className={`relative flex flex-col items-center justify-center min-h-[50vh] text-center p-8 overflow-hidden ${heroColors.bg} ${heroColors.text}`}
+                className={`relative flex flex-col items-center justify-center min-h-[50vh] text-center p-8 overflow-hidden bg-gray-950 text-gray-200`}
             >
                 <div className="relative z-10 max-w-4xl mx-auto">
                     <h1
@@ -301,12 +334,12 @@ const Gallery = () => {
                         Our Masterpieces
                     </h1>
                     <p
-                        className={`text-xl md:text-2xl mb-8 opacity-80 ${heroColors.secondaryText}`}
+                        className={`text-xl md:text-2xl mb-8 opacity-80 text-gray-400`}
                     >
                         A visual journey through our finest work and unforgettable moments.
                     </p>
                     <button
-                        className={`px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300 ${heroColors.button}`}
+                        className={`px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300 bg-yellow-500 hover:bg-yellow-600 text-white`}
                         onClick={() => {
                             const gallerySection = document.getElementById('photo-gallery-section');
                             if (gallerySection) {
@@ -322,14 +355,14 @@ const Gallery = () => {
             {/* Photo Gallery Section */}
             <section 
                 id="photo-gallery-section" 
-                className={`py-16 px-4 md:px-8 ${galleryColors.bg} ${galleryColors.text}`}
+                className={`py-16 px-4 md:px-8 bg-white text-gray-900`}
             >
                 <div className="max-w-7xl mx-auto text-center">
                     <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
                         Our Portfolio
                     </span>
-                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${galleryColors.text}`}>Photo Gallery</h2>
-                    <p className={`text-center text-lg mb-12 ${galleryColors.secondaryText}`}>Capture your moments in perfect light.</p>
+                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center text-gray-900`}>Photo Gallery</h2>
+                    <p className={`text-center text-lg mb-12 text-gray-600`}>Capture your moments in perfect light.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {galleryImages.map((image, index) => (
                             <div
@@ -347,8 +380,8 @@ const Gallery = () => {
                 </div>
             </section>
 
-            {/* Our Story Section */}
-            <OurStory theme={theme} />
+            {/* Our Story Section with spring animation */}
+            <OurStory />
             
             {/* Lazy-loaded components below */}
             <Suspense fallback={<div>Loading...</div>}>
@@ -356,13 +389,13 @@ const Gallery = () => {
             </Suspense>
 
             {/* Videos Section */}
-            <section className={`py-16 px-4 md:px-8 ${videosColors.bg} ${videosColors.text}`}>
+            <section className={`py-16 px-4 md:px-8 bg-gray-950 text-gray-200`}>
                 <div className="max-w-7xl mx-auto text-center">
                     <span className="inline-block px-4 py-1 mb-4 text-xs md:text-sm font-medium rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow">
                         Our Vision
                     </span>
-                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center ${videosColors.text}`}>Video Showcase</h2>
-                    <p className={`text-center text-lg mb-12 ${videosColors.secondaryText}`}>Watch our creative process and final results.</p>
+                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 text-center text-gray-200`}>Video Showcase</h2>
+                    <p className={`text-center text-lg mb-12 text-gray-400`}>Watch our creative process and final results.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {videoLinks.map((link, index) => (
                             <VideoPlayer key={index} videoUrl={link} />
@@ -373,13 +406,19 @@ const Gallery = () => {
             
             {/* Reels Section (Horizontal Slider) */}
             <Suspense fallback={<div>Loading...</div>}>
-                <AutoAnimatedSlider videos={shortVideos} theme={reelsColors} />
+                <AutoAnimatedSlider videos={shortVideos} theme={{
+                    bg: "bg-white",
+                    text: "text-gray-900",
+                    secondaryText: "text-gray-600",
+                    primaryAccent: "text-yellow-600",
+                    button: "bg-yellow-500 hover:bg-yellow-600 text-white",
+                }} />
             </Suspense>
 
             {/* Scroll to Top Button */}
             {showScrollTop && (
                 <button
-                    className={`fixed bottom-8 right-8 p-3 rounded-full shadow-lg z-50 ${heroColors.button} text-white`}
+                    className={`fixed bottom-8 right-8 p-3 rounded-full shadow-lg z-50 bg-yellow-500 hover:bg-yellow-600 text-white`}
                     onClick={scrollToTop}
                 >
                     <ArrowUp size={24} />

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, memo } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -25,21 +27,6 @@ const itemVariants = {
   visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const descriptiveCardHoverVariants = {
-  initial: { scale: 1, y: 0, boxShadow: "0px 6px 25px rgba(0,0,0,0.1)" },
-  hover: { scale: 1.05, y: -5, boxShadow: "0px 12px 40px rgba(0,0,0,0.2)", transition: { duration: 0.3, ease: "easeOut" } },
-};
-
-const slideDownVariants = {
-  initial: { y: "-100%" },
-  hover: { y: "0%", transition: { duration: 0.3, ease: "easeOut" } },
-};
-
-const iconHoverVariants = {
-  initial: { scale: 1 },
-  hover: { scale: 1.1, rotate: 15 },
-};
-
 const serviceCards = [
   { image: photo1, title: "Eco-Friendly Hair Care", description: "We use organic, eco-friendly products for precision cutting, styling, and treatments for all hair types." },
   { image: photo2, title: "Exceptional Skin Care", description: "Our team provides exceptional facials and rejuvenating treatments with a focus on client satisfaction." },
@@ -56,7 +43,9 @@ const promiseCards = [
 
 const OurPromiseSection = memo(() => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  
+  // The 'once: true' property has been removed to allow animations on both scroll up and down.
+  const isInView = useInView(ref, { amount: 0.2 });
 
   return (
     <div className="bg-gray-50 pt-10 sm:pt-16 pb-20 sm:pb-32" ref={ref}>
@@ -80,8 +69,9 @@ const OurPromiseSection = memo(() => {
                 key={index}
                 className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-transform duration-300 transform-gpu hover:scale-105"
                 initial={{ opacity: 0, y: 50 }}
+                // The `whileInView` and `viewport` properties are kept as they are.
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
+                viewport={{ amount: 0.5 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <div className="relative w-full h-64 overflow-hidden rounded-2xl">
@@ -111,16 +101,18 @@ const OurPromiseSection = memo(() => {
               <motion.div
                 key={index}
                 className="relative overflow-hidden bg-white p-6 rounded-lg shadow-2xl flex flex-col justify-center items-center text-center group cursor-pointer"
-                variants={descriptiveCardHoverVariants}
-                initial="initial"
-                whileHover="hover"
-                transition={{ duration: 0.3 }}
+                // The hover animation now uses a combination of Framer Motion and CSS for efficiency
+                initial={{ y: 0, boxShadow: "0px 6px 25px rgba(0,0,0,0.1)" }}
+                whileHover={{ y: -5, boxShadow: "0px 12px 40px rgba(0,0,0,0.2)" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <motion.div className="absolute inset-0 bg-orange-400 origin-top" variants={slideDownVariants} />
+                {/* Simplified slide-down effect */}
+                <div className="absolute inset-0 bg-orange-400 origin-top transform-gpu transition-transform duration-300 ease-out translate-y-full group-hover:translate-y-0" />
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <motion.div className="flex-shrink-0" variants={iconHoverVariants} whileHover="hover">
-                    <motion.div className="text-orange-600 group-hover:text-black transition-colors duration-300">{card.icon}</motion.div>
-                  </motion.div>
+                  {/* Icon hover effect now uses CSS for smoothness */}
+                  <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-15">
+                    <div className="text-orange-600 group-hover:text-black transition-colors duration-300">{card.icon}</div>
+                  </div>
                   <h3 className="text-lg font-semibold text-gray-900 group-hover:text-black transition-colors duration-300">{card.text}</h3>
                 </div>
               </motion.div>

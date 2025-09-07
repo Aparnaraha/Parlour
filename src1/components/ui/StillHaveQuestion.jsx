@@ -7,7 +7,7 @@ import { Phone, Mail, MessageCircle, ArrowDown } from 'lucide-react';
 /**
  * A reusable component for the "Still Have Questions" section.
  * This component features a static glow effect on the main card with a dark theme.
- * It also includes a scroll-to-FAQs button.
+ * It also includes a scroll-to-next-section button.
  */
 
 // Variants for staggered animation of the container and its children
@@ -30,10 +30,10 @@ const StillQuestionsSection = memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
 
-  const handleScrollToFAQs = useCallback(() => {
-    const faqSection = document.getElementById('faqs-section');
-    if (faqSection) {
-      faqSection.scrollIntoView({ behavior: 'smooth' });
+  // Modified function to scroll to the next section after this component
+  const handleScrollToNextSection = useCallback(() => {
+    if (ref.current && ref.current.nextElementSibling) {
+      ref.current.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
@@ -64,17 +64,7 @@ const StillQuestionsSection = memo(() => {
           -webkit-mask-composite: xor;
           mask-composite: exclude;
           opacity: 0.5;
-          /* REMOVED: animation: rotate-border 4s linear infinite; */
         }
-
-        /* The @keyframes rotate-border block can also be removed if it's no longer used anywhere else */
-        /*
-        @keyframes rotate-border {
-          to {
-            transform: rotate(1turn);
-          }
-        }
-        */
       `}</style>
 
       <motion.div
@@ -131,11 +121,14 @@ const StillQuestionsSection = memo(() => {
                 <h3 className="text-xl font-semibold mb-2 text-white">Email Us</h3>
                 <p className="text-gray-400 mb-2">Typically replies in 24h</p>
                 <a
-                  href="mailto:contact@yourparlour.com"
-                  className="mt-2 px-4 py-2 text-green-500 hover:text-white hover:bg-green-500/20 border border-green-500 rounded-full transition-all duration-300"
-                >
-                  Send Email
-                </a>
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=appuraha29@gmail.com&su=Enquiry%20from%20Website&body=Hello%20Alex%20Parlour,"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="mt-2 px-4 py-2 text-green-500 border border-green-500 rounded-full transition-all duration-300 hover:bg-green-500 hover:text-white"
+>
+  Send Email
+</a>
+
               </motion.div>
 
               {/* WhatsApp Card */}
@@ -159,10 +152,10 @@ const StillQuestionsSection = memo(() => {
           </div>
         </div>
 
-        {/* Moved: Arrow to scroll to the FAQ section, now in the background */}
+        {/* Updated: Arrow to scroll to the next section */}
         <motion.div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 p-3 bg-[#1d212a] rounded-full border border-gray-700 cursor-pointer shadow-lg z-20 flex flex-col justify-center items-center shadow-green-100"
-          onClick={handleScrollToFAQs}
+          onClick={handleScrollToNextSection}
           initial={{ y: 0 }}
           animate={{ y: [0, 10, 0] }}
           transition={{
